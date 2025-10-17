@@ -9,6 +9,7 @@ import { userExists, userNotExists } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socket";
 import { CallProvider } from "./context/CallContext";
+import { StreamVideoProvider } from "./context/StreamVideoContext";
 import IncomingCallDialog from "./components/dialogs/IncomingCallDialog";
 import ActiveCallDialog from "./components/dialogs/ActiveCallDialog";
 
@@ -43,40 +44,42 @@ const App = () => {
   ) : (
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
-        <Routes>
-          <Route
-            element={
-              <SocketProvider>
-                <CallProvider user={user}>
-                  <ProtectRoute user={user} />
-                  <IncomingCallDialog />
-                  <ActiveCallDialog />
-                </CallProvider>
-              </SocketProvider>
-            }
-          >
-            <Route path="/" element={<Home />} />
-            <Route path="/chat/:chatId" element={<Chat />} />
-            <Route path="/groups" element={<Groups />} />
-          </Route>
+        <StreamVideoProvider>
+          <Routes>
+            <Route
+              element={
+                <SocketProvider>
+                  <CallProvider user={user}>
+                    <ProtectRoute user={user} />
+                    <IncomingCallDialog />
+                    <ActiveCallDialog />
+                  </CallProvider>
+                </SocketProvider>
+              }
+            >
+              <Route path="/" element={<Home />} />
+              <Route path="/chat/:chatId" element={<Chat />} />
+              <Route path="/groups" element={<Groups />} />
+            </Route>
 
-          <Route
-            path="/login"
-            element={
-              <ProtectRoute user={!user} redirect="/">
-                <Login />
-              </ProtectRoute>
-            }
-          />
+            <Route
+              path="/login"
+              element={
+                <ProtectRoute user={!user} redirect="/">
+                  <Login />
+                </ProtectRoute>
+              }
+            />
 
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/chats" element={<ChatManagement />} />
-          <Route path="/admin/messages" element={<MessagesManagement />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/admin/chats" element={<ChatManagement />} />
+            <Route path="/admin/messages" element={<MessagesManagement />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </StreamVideoProvider>
       </Suspense>
 
       <Toaster position="bottom-center" />
