@@ -24,10 +24,28 @@ import { motion } from 'framer-motion';
 
 const ThemeSettings = ({ open, onClose }) => {
   const { mode, toggleTheme, wallpaper, setWallpaper, presetWallpapers } = useTheme();
+  const [selectedWallpaper, setSelectedWallpaper] = React.useState(wallpaper);
 
-  const handleWallpaperChange = (newWallpaper) => {
-    setWallpaper(newWallpaper);
+  const handleWallpaperSelect = (newWallpaper) => {
+    setSelectedWallpaper(newWallpaper);
   };
+
+  const handleApply = () => {
+    setWallpaper(selectedWallpaper);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setSelectedWallpaper(wallpaper); // Reset to current wallpaper
+    onClose();
+  };
+
+  // Sync when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      setSelectedWallpaper(wallpaper);
+    }
+  }, [open, wallpaper]);
 
   return (
     <Dialog
@@ -125,19 +143,25 @@ const ThemeSettings = ({ open, onClose }) => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Paper
-                    elevation={wallpaper.id === preset.id ? 8 : 2}
-                    onClick={() => handleWallpaperChange(preset)}
+                    elevation={selectedWallpaper.id === preset.id ? 8 : 2}
+                    onClick={() => handleWallpaperSelect(preset)}
                     sx={{
                       position: 'relative',
                       aspectRatio: '1',
                       cursor: 'pointer',
                       overflow: 'hidden',
                       borderRadius: 2,
-                      border: wallpaper.id === preset.id ? '3px solid #667eea' : '3px solid transparent',
-                      transition: 'all 0.3s',
+                      border: selectedWallpaper.id === preset.id 
+                        ? '4px solid #667eea' 
+                        : '2px solid transparent',
+                      transition: 'all 0.3s ease',
+                      transform: selectedWallpaper.id === preset.id ? 'scale(1.02)' : 'scale(1)',
+                      boxShadow: selectedWallpaper.id === preset.id 
+                        ? '0 8px 24px rgba(102, 126, 234, 0.4)'
+                        : '0 2px 8px rgba(0,0,0,0.1)',
                       '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: 6,
+                        transform: 'translateY(-4px) scale(1.02)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
                       },
                     }}
                   >
@@ -146,44 +170,66 @@ const ThemeSettings = ({ open, onClose }) => {
                       sx={{
                         width: '100%',
                         height: '100%',
-                        background: preset.type === 'gradient' ? preset.value : preset.value,
-                        backgroundImage: preset.pattern || 'none',
+                        background: preset.type === 'gradient' 
+                          ? preset.value 
+                          : preset.value,
+                        backgroundImage: preset.type === 'pattern' 
+                          ? preset.pattern 
+                          : 'none',
+                        backgroundSize: preset.type === 'pattern' ? 'auto' : 'cover',
+                        backgroundPosition: 'center',
                       }}
                     />
 
                     {/* Selected Indicator */}
-                    {wallpaper.id === preset.id && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          bgcolor: 'rgba(102, 126, 234, 0.3)',
-                          backdropFilter: 'blur(2px)',
-                        }}
+                    {selectedWallpaper.id === preset.id && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
                       >
                         <Box
                           sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: '50%',
-                            bgcolor: '#667eea',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'white',
-                            fontWeight: 'bold',
-                            fontSize: '1.5rem',
+                            bgcolor: 'rgba(102, 126, 234, 0.25)',
+                            backdropFilter: 'blur(4px)',
                           }}
                         >
-                          ✓
+                          <Box
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: '50%',
+                              bgcolor: '#667eea',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontWeight: 'bold',
+                              fontSize: '1.8rem',
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                              animation: 'pulse 2s infinite',
+                              '@keyframes pulse': {
+                                '0%, 100%': {
+                                  transform: 'scale(1)',
+                                },
+                                '50%': {
+                                  transform: 'scale(1.1)',
+                                },
+                              },
+                            }}
+                          >
+                            ✓
+                          </Box>
                         </Box>
-                      </Box>
+                      </motion.div>
                     )}
 
                     {/* Wallpaper Name */}
@@ -193,13 +239,20 @@ const ThemeSettings = ({ open, onClose }) => {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        bgcolor: 'rgba(0,0,0,0.6)',
+                        bgcolor: selectedWallpaper.id === preset.id
+                          ? 'rgba(102, 126, 234, 0.9)'
+                          : 'rgba(0,0,0,0.7)',
                         color: 'white',
-                        p: 0.5,
+                        p: 0.75,
                         textAlign: 'center',
+                        transition: 'all 0.3s',
                       }}
                     >
-                      <Typography variant="caption" fontSize="0.7rem">
+                      <Typography 
+                        variant="caption" 
+                        fontSize="0.75rem"
+                        fontWeight={selectedWallpaper.id === preset.id ? 'bold' : 'medium'}
+                      >
                         {preset.name}
                       </Typography>
                     </Box>
@@ -212,21 +265,34 @@ const ThemeSettings = ({ open, onClose }) => {
 
         {/* Action Buttons */}
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-          <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button 
+            onClick={handleCancel} 
+            variant="outlined" 
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+            }}
+          >
             Cancel
           </Button>
           <Button
-            onClick={onClose}
+            onClick={handleApply}
             variant="contained"
             sx={{
               borderRadius: 2,
+              px: 4,
+              py: 1,
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               '&:hover': {
                 background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
               },
+              transition: 'all 0.3s ease',
             }}
           >
-            Apply
+            Apply Changes
           </Button>
         </Box>
       </DialogContent>

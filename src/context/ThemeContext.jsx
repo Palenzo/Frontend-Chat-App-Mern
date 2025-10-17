@@ -264,6 +264,7 @@ export const ThemeProvider = ({ children }) => {
     mode,
     toggleTheme,
     wallpaper,
+    setWallpaper: changeWallpaper, // Alias for better API
     changeWallpaper,
     getWallpaperStyle,
     presetWallpapers,
