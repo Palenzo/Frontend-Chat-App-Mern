@@ -22,18 +22,7 @@ import {
   CHAT_LEAVED,
   NEW_MESSAGE,
   START_TYPING,
-  STOP_TYPING,  # Switch to master
-  git checkout master
-  
-  # Merge main into master
-  git merge main --allow-unrelated-histories
-  
-  # Resolve conflicts if any
-  git add .
-  git commit -m "Merge main into master - resolved unrelated histories"
-  
-  # Push changes
-  git push origin master
+  STOP_TYPING,
   ONLINE_USERS,
 } from "../constants/events";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
