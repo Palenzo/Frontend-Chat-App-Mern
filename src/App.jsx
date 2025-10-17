@@ -8,6 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socket";
+import { CallProvider } from "./context/CallContext";
+import IncomingCallDialog from "./components/dialogs/IncomingCallDialog";
+import ActiveCallDialog from "./components/dialogs/ActiveCallDialog";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -44,7 +47,11 @@ const App = () => {
           <Route
             element={
               <SocketProvider>
-                <ProtectRoute user={user} />
+                <CallProvider user={user}>
+                  <ProtectRoute user={user} />
+                  <IncomingCallDialog />
+                  <ActiveCallDialog />
+                </CallProvider>
               </SocketProvider>
             }
           >

@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import AppLayout from "../components/layout/AppLayout";
-import { IconButton, Skeleton, Stack } from "@mui/material";
+import { IconButton, Skeleton, Stack, Box } from "@mui/material";
 import { grayColor, orange } from "../constants/color";
 import {
   AttachFile as AttachFileIcon,
@@ -23,6 +23,7 @@ import {
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
+  ONLINE_USERS,
 } from "../constants/events";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hook";
@@ -32,6 +33,7 @@ import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loaders";
 import { useNavigate } from "react-router-dom";
+import ChatHeader from "../components/layout/ChatHeader";
 
 const Chat = ({ chatId, user }) => {
   const socket = getSocket();
@@ -48,6 +50,7 @@ const Chat = ({ chatId, user }) => {
 
   const [IamTyping, setIamTyping] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const typingTimeout = useRef(null);
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
@@ -148,6 +151,10 @@ const Chat = ({ chatId, user }) => {
     [chatId]
   );
 
+  const onlineUsersListener = useCallback((data) => {
+    setOnlineUsers(data);
+  }, []);
+
   const alertListener = useCallback(
     (data) => {
       if (data.chatId !== chatId) return;
@@ -171,6 +178,7 @@ const Chat = ({ chatId, user }) => {
     [NEW_MESSAGE]: newMessagesListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
+    [ONLINE_USERS]: onlineUsersListener,
   };
 
   useSocketEvents(socket, eventHandler);
@@ -183,13 +191,21 @@ const Chat = ({ chatId, user }) => {
     <Skeleton />
   ) : (
     <Fragment>
+      {/* Chat Header with Call Buttons */}
+      <ChatHeader
+        chat={chatDetails.data?.chat}
+        members={members}
+        user={user}
+        onlineUsers={onlineUsers}
+      />
+
       <Stack
         ref={containerRef}
         boxSizing={"border-box"}
         padding={"1rem"}
         spacing={"1rem"}
         bgcolor={grayColor}
-        height={"90%"}
+        height={"calc(90% - 60px)"}
         sx={{
           overflowX: "hidden",
           overflowY: "auto",
