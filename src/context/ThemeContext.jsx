@@ -93,6 +93,7 @@ export const ThemeProvider = ({ children }) => {
   }, [mode]);
 
   useEffect(() => {
+    console.log('💾 Saving wallpaper to localStorage:', wallpaper);
     localStorage.setItem(WALLPAPER_STORAGE_KEY, JSON.stringify(wallpaper));
   }, [wallpaper]);
 
@@ -101,6 +102,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const changeWallpaper = (newWallpaper) => {
+    console.log('🖼️ ThemeContext: Changing wallpaper to:', newWallpaper);
     setWallpaper(newWallpaper);
   };
 

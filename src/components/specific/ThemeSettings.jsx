@@ -27,15 +27,18 @@ const ThemeSettings = ({ open, onClose }) => {
   const [selectedWallpaper, setSelectedWallpaper] = React.useState(wallpaper);
 
   const handleWallpaperSelect = (newWallpaper) => {
+    console.log('🎨 Wallpaper selected:', newWallpaper);
     setSelectedWallpaper(newWallpaper);
   };
 
   const handleApply = () => {
+    console.log('✅ Applying wallpaper:', selectedWallpaper);
     setWallpaper(selectedWallpaper);
     onClose();
   };
 
   const handleCancel = () => {
+    console.log('❌ Cancelled, reverting to:', wallpaper);
     setSelectedWallpaper(wallpaper); // Reset to current wallpaper
     onClose();
   };

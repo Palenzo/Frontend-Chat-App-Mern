@@ -47,6 +47,11 @@ export const CallProvider = ({ children, user }) => {
         return;
       }
 
+      if (!user || !user._id) {
+        toast.error('User not authenticated');
+        return;
+      }
+
       console.log('🎥 Initiating call:', { chatId, receiverId, callType, receiverName });
 
       // Generate unique call ID
@@ -69,7 +74,7 @@ export const CallProvider = ({ children, user }) => {
           custom: {
             chatId,
             callerId: user._id,
-            callerName: user.name,
+            callerName: user.name || 'User',
             receiverId,
             receiverName,
           },
@@ -90,7 +95,7 @@ export const CallProvider = ({ children, user }) => {
         receiverId,
         callType,
         callId,
-        callerName: user.name,
+        callerName: user.name || 'User',
       });
 
       toast.success(`Calling ${receiverName}...`);
@@ -177,7 +182,7 @@ export const CallProvider = ({ children, user }) => {
         setActiveCall(null);
       }
 
-      if (currentCall) {
+      if (currentCall && user && user._id) {
         // Notify backend
         await axios.post(
           `${server}/api/v1/call/end/${currentCall._id}`,
