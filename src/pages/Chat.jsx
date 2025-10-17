@@ -55,7 +55,7 @@ const Chat = ({ chatId, user }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const typingTimeout = useRef(null);
 
-  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+  const chatDetails = useChatDetailsQuery({ chatId, populate: true, skip: !chatId });
 
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
 
