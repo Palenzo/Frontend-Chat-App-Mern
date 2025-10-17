@@ -38,7 +38,13 @@ const CallButtons = ({ chatId, members, user }) => {
   };
 
   const handleVoiceCall = () => {
+    console.log('=== VOICE CALL DEBUG ===');
+    console.log('chatId:', chatId);
+    console.log('members array:', members);
+    console.log('user:', user);
+    
     const otherUser = getOtherUser();
+    console.log('otherUser found:', otherUser);
     
     // Validation
     if (!chatId) {
@@ -48,7 +54,7 @@ const CallButtons = ({ chatId, members, user }) => {
     }
     
     if (!otherUser || !otherUser._id) {
-      console.error('Receiver not found');
+      console.error('Receiver not found - otherUser:', otherUser);
       toast.error('Unable to initiate call: Receiver not found');
       return;
     }
@@ -65,7 +71,13 @@ const CallButtons = ({ chatId, members, user }) => {
   };
 
   const handleVideoCall = () => {
+    console.log('=== VIDEO CALL DEBUG ===');
+    console.log('chatId:', chatId);
+    console.log('members array:', members);
+    console.log('user:', user);
+    
     const otherUser = getOtherUser();
+    console.log('otherUser found:', otherUser);
     
     // Validation
     if (!chatId) {
@@ -75,7 +87,7 @@ const CallButtons = ({ chatId, members, user }) => {
     }
     
     if (!otherUser || !otherUser._id) {
-      console.error('Receiver not found');
+      console.error('Receiver not found - otherUser:', otherUser);
       toast.error('Unable to initiate call: Receiver not found');
       return;
     }
