@@ -20,9 +20,10 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 const CallButtons = ({ chatId, members, user }) => {
-  const { initiateCall } = useCall();
+  const { initiateCall, activeCall } = useCall();
   const [anchorEl, setAnchorEl] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [isInitiating, setIsInitiating] = useState(false);
 
   // Get the other user in the chat
   const getOtherUser = () => {
@@ -37,7 +38,7 @@ const CallButtons = ({ chatId, members, user }) => {
     setAnchorEl(null);
   };
 
-  const handleVoiceCall = () => {
+  const handleVoiceCall = async () => {
     console.log('=== VOICE CALL DEBUG ===');
     console.log('chatId:', chatId);
     console.log('members array:', members);
@@ -58,19 +59,35 @@ const CallButtons = ({ chatId, members, user }) => {
       toast.error('Unable to initiate call: Receiver not found');
       return;
     }
+
+    if (activeCall) {
+      toast.error('You already have an active call');
+      return;
+    }
     
-    console.log('Initiating voice call:', {
-      chatId,
-      receiverId: otherUser._id,
-      callType: 'audio',
-      receiverName: otherUser.name
-    });
-    
-    initiateCall(chatId, otherUser._id, 'audio', otherUser.name);
-    handleMenuClose();
+    try {
+      setIsInitiating(true);
+      toast.loading('Starting voice call...', { id: 'voice-call' });
+      
+      console.log('Initiating voice call:', {
+        chatId,
+        receiverId: otherUser._id,
+        callType: 'audio',
+        receiverName: otherUser.name
+      });
+      
+      await initiateCall(chatId, otherUser._id, 'audio', otherUser.name);
+      toast.success(`Calling ${otherUser.name}...`, { id: 'voice-call' });
+      handleMenuClose();
+    } catch (error) {
+      console.error('Voice call error:', error);
+      toast.error('Failed to start call', { id: 'voice-call' });
+    } finally {
+      setIsInitiating(false);
+    }
   };
 
-  const handleVideoCall = () => {
+  const handleVideoCall = async () => {
     console.log('=== VIDEO CALL DEBUG ===');
     console.log('chatId:', chatId);
     console.log('members array:', members);
@@ -91,16 +108,32 @@ const CallButtons = ({ chatId, members, user }) => {
       toast.error('Unable to initiate call: Receiver not found');
       return;
     }
+
+    if (activeCall) {
+      toast.error('You already have an active call');
+      return;
+    }
     
-    console.log('Initiating video call:', {
-      chatId,
-      receiverId: otherUser._id,
-      callType: 'video',
-      receiverName: otherUser.name
-    });
-    
-    initiateCall(chatId, otherUser._id, 'video', otherUser.name);
-    handleMenuClose();
+    try {
+      setIsInitiating(true);
+      toast.loading('Starting video call...', { id: 'video-call' });
+      
+      console.log('Initiating video call:', {
+        chatId,
+        receiverId: otherUser._id,
+        callType: 'video',
+        receiverName: otherUser.name
+      });
+      
+      await initiateCall(chatId, otherUser._id, 'video', otherUser.name);
+      toast.success(`Video calling ${otherUser.name}...`, { id: 'video-call' });
+      handleMenuClose();
+    } catch (error) {
+      console.error('Video call error:', error);
+      toast.error('Failed to start video call', { id: 'video-call' });
+    } finally {
+      setIsInitiating(false);
+    }
   };
 
   const handleShowHistory = () => {
@@ -117,49 +150,79 @@ const CallButtons = ({ chatId, members, user }) => {
     <>
       {/* Quick Action Buttons */}
       <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
       >
-        <Tooltip title="Voice Call">
+        <Tooltip title="Voice Call" arrow>
           <IconButton
             onClick={handleVoiceCall}
+            disabled={isInitiating || activeCall}
             sx={{
               color: '#10b981',
+              bgcolor: 'rgba(16, 185, 129, 0.1)',
+              border: '2px solid rgba(16, 185, 129, 0.3)',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                bgcolor: 'rgba(16, 185, 129, 0.1)',
+                bgcolor: 'rgba(16, 185, 129, 0.2)',
+                borderColor: '#10b981',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+              },
+              '&:disabled': {
+                opacity: 0.5,
+                cursor: 'not-allowed',
               },
             }}
           >
-            <CallIcon />
+            <CallIcon fontSize="medium" />
           </IconButton>
         </Tooltip>
       </motion.div>
 
       <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
       >
-        <Tooltip title="Video Call">
+        <Tooltip title="Video Call" arrow>
           <IconButton
             onClick={handleVideoCall}
+            disabled={isInitiating || activeCall}
             sx={{
               color: '#3b82f6',
+              bgcolor: 'rgba(59, 130, 246, 0.1)',
+              border: '2px solid rgba(59, 130, 246, 0.3)',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                bgcolor: 'rgba(59, 130, 246, 0.1)',
+                bgcolor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: '#3b82f6',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+              },
+              '&:disabled': {
+                opacity: 0.5,
+                cursor: 'not-allowed',
               },
             }}
           >
-            <VideocamIcon />
+            <VideocamIcon fontSize="medium" />
           </IconButton>
         </Tooltip>
       </motion.div>
 
       <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
       >
-        <Tooltip title="More options">
-          <IconButton onClick={handleMenuOpen}>
+        <Tooltip title="More options" arrow>
+          <IconButton 
+            onClick={handleMenuOpen}
+            sx={{
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'rotate(90deg)',
+              },
+            }}
+          >
             <MoreVertIcon />
           </IconButton>
         </Tooltip>
@@ -171,32 +234,70 @@ const CallButtons = ({ chatId, members, user }) => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
         PaperProps={{
-          sx: {
+          sx={{
             borderRadius: 2,
-            minWidth: 200,
-            boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+            minWidth: 220,
+            boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
+            border: '1px solid rgba(0,0,0,0.05)',
           },
         }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleVoiceCall}>
+        <MenuItem 
+          onClick={handleVoiceCall}
+          disabled={isInitiating || activeCall}
+          sx={{
+            py: 1.5,
+            '&:hover': {
+              bgcolor: 'rgba(16, 185, 129, 0.08)',
+            },
+          }}
+        >
           <ListItemIcon>
-            <CallIcon sx={{ color: '#10b981' }} />
+            <CallIcon sx={{ color: '#10b981', fontSize: 20 }} />
           </ListItemIcon>
-          <ListItemText primary="Voice Call" />
+          <ListItemText 
+            primary="Voice Call" 
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
         </MenuItem>
 
-        <MenuItem onClick={handleVideoCall}>
+        <MenuItem 
+          onClick={handleVideoCall}
+          disabled={isInitiating || activeCall}
+          sx={{
+            py: 1.5,
+            '&:hover': {
+              bgcolor: 'rgba(59, 130, 246, 0.08)',
+            },
+          }}
+        >
           <ListItemIcon>
-            <VideocamIcon sx={{ color: '#3b82f6' }} />
+            <VideocamIcon sx={{ color: '#3b82f6', fontSize: 20 }} />
           </ListItemIcon>
-          <ListItemText primary="Video Call" />
+          <ListItemText 
+            primary="Video Call" 
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
         </MenuItem>
 
-        <MenuItem onClick={handleShowHistory}>
+        <MenuItem 
+          onClick={handleShowHistory}
+          sx={{
+            py: 1.5,
+            '&:hover': {
+              bgcolor: 'rgba(245, 158, 11, 0.08)',
+            },
+          }}
+        >
           <ListItemIcon>
-            <HistoryIcon sx={{ color: '#f59e0b' }} />
+            <HistoryIcon sx={{ color: '#f59e0b', fontSize: 20 }} />
           </ListItemIcon>
-          <ListItemText primary="Call History" />
+          <ListItemText 
+            primary="Call History" 
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
         </MenuItem>
       </Menu>
 
