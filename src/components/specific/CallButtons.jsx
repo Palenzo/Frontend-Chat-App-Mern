@@ -17,6 +17,7 @@ import {
 import { useCall } from '../../context/CallContext';
 import CallHistoryDialog from '../dialogs/CallHistoryDialog';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const CallButtons = ({ chatId, members, user }) => {
   const { initiateCall } = useCall();
@@ -38,17 +39,55 @@ const CallButtons = ({ chatId, members, user }) => {
 
   const handleVoiceCall = () => {
     const otherUser = getOtherUser();
-    if (otherUser) {
-      initiateCall(chatId, otherUser._id, 'audio', otherUser.name);
+    
+    // Validation
+    if (!chatId) {
+      console.error('ChatId is missing');
+      toast.error('Unable to initiate call: Chat ID missing');
+      return;
     }
+    
+    if (!otherUser || !otherUser._id) {
+      console.error('Receiver not found');
+      toast.error('Unable to initiate call: Receiver not found');
+      return;
+    }
+    
+    console.log('Initiating voice call:', {
+      chatId,
+      receiverId: otherUser._id,
+      callType: 'audio',
+      receiverName: otherUser.name
+    });
+    
+    initiateCall(chatId, otherUser._id, 'audio', otherUser.name);
     handleMenuClose();
   };
 
   const handleVideoCall = () => {
     const otherUser = getOtherUser();
-    if (otherUser) {
-      initiateCall(chatId, otherUser._id, 'video', otherUser.name);
+    
+    // Validation
+    if (!chatId) {
+      console.error('ChatId is missing');
+      toast.error('Unable to initiate call: Chat ID missing');
+      return;
     }
+    
+    if (!otherUser || !otherUser._id) {
+      console.error('Receiver not found');
+      toast.error('Unable to initiate call: Receiver not found');
+      return;
+    }
+    
+    console.log('Initiating video call:', {
+      chatId,
+      receiverId: otherUser._id,
+      callType: 'video',
+      receiverName: otherUser.name
+    });
+    
+    initiateCall(chatId, otherUser._id, 'video', otherUser.name);
     handleMenuClose();
   };
 
