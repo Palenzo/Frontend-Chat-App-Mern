@@ -17,6 +17,7 @@ import {
   Group as GroupIcon,
   Logout as LogoutIcon,
   Notifications as NotificationsIcon,
+  Palette as PaletteIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,6 +36,7 @@ import { resetNotificationCount } from "../../redux/reducers/chat";
 const SearchDialog = lazy(() => import("../specific/Search"));
 const NotifcationDialog = lazy(() => import("../specific/Notifications"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroup"));
+const ThemeSettings = lazy(() => import("../specific/ThemeSettings"));
 
 const Header = () => {
   const navigate = useNavigate();
@@ -44,6 +46,8 @@ const Header = () => {
     (state) => state.misc
   );
   const { notificationCount } = useSelector((state) => state.chat);
+
+  const [isThemeSettings, setIsThemeSettings] = React.useState(false);
 
   const handleMobile = () => dispatch(setIsMobile(true));
 
@@ -56,6 +60,14 @@ const Header = () => {
   const openNotification = () => {
     dispatch(setIsNotification(true));
     dispatch(resetNotificationCount());
+  };
+
+  const openThemeSettings = () => {
+    setIsThemeSettings(true);
+  };
+
+  const closeThemeSettings = () => {
+    setIsThemeSettings(false);
   };
 
   const navigateToGroup = () => navigate("/groups");
@@ -132,6 +144,12 @@ const Header = () => {
               />
 
               <IconBtn
+                title={"Theme & Wallpaper"}
+                icon={<PaletteIcon />}
+                onClick={openThemeSettings}
+              />
+
+              <IconBtn
                 title={"Logout"}
                 icon={<LogoutIcon />}
                 onClick={logoutHandler}
@@ -156,6 +174,12 @@ const Header = () => {
       {isNewGroup && (
         <Suspense fallback={<Backdrop open />}>
           <NewGroupDialog />
+        </Suspense>
+      )}
+
+      {isThemeSettings && (
+        <Suspense fallback={<Backdrop open />}>
+          <ThemeSettings open={isThemeSettings} onClose={closeThemeSettings} />
         </Suspense>
       )}
     </>

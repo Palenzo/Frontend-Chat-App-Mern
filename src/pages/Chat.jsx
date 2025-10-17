@@ -34,11 +34,13 @@ import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loaders";
 import { useNavigate } from "react-router-dom";
 import ChatHeader from "../components/layout/ChatHeader";
+import { useTheme } from "../context/ThemeContext";
 
 const Chat = ({ chatId, user }) => {
   const socket = getSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { wallpaper } = useTheme();
 
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -204,9 +206,13 @@ const Chat = ({ chatId, user }) => {
         boxSizing={"border-box"}
         padding={"1rem"}
         spacing={"1rem"}
-        bgcolor={grayColor}
         height={"calc(90% - 60px)"}
         sx={{
+          background: wallpaper.type === 'gradient' ? wallpaper.value : wallpaper.value,
+          backgroundImage: wallpaper.pattern || 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
           overflowX: "hidden",
           overflowY: "auto",
         }}
