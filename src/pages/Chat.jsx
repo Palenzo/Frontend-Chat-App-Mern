@@ -225,6 +225,20 @@ const Chat = ({ chatId, user }) => {
           ),
           overflowX: "hidden",
           overflowY: "auto",
+          maxWidth: "100%",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "rgba(0,0,0,0.05)",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "rgba(102, 126, 234, 0.5)",
+            borderRadius: "10px",
+            "&:hover": {
+              background: "rgba(102, 126, 234, 0.7)",
+            },
+          },
         }}
       >
         {allMessages.map((i) => (

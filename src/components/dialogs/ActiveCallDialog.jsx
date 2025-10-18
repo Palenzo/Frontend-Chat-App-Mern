@@ -96,6 +96,7 @@ const ActiveCallDialog = () => {
       PaperProps={{
         sx: {
           background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+          overflow: 'hidden',
         },
       }}
     >
@@ -121,6 +122,7 @@ const ActiveCallDialog = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            overflow: 'hidden',
           }}
         >
           {callType === 'video' ? (

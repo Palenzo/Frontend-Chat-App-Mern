@@ -125,7 +125,7 @@ export const ThemeProvider = ({ children }) => {
           mode,
           ...(mode === 'light'
             ? {
-                // Light mode colors
+                // Light mode colors - Soft and Modern
                 primary: {
                   main: '#667eea',
                   light: '#8b9aee',
@@ -139,38 +139,62 @@ export const ThemeProvider = ({ children }) => {
                   contrastText: '#fff',
                 },
                 background: {
-                  default: '#f5f5f5',
+                  default: '#f8f9fa',
                   paper: '#ffffff',
                 },
                 text: {
-                  primary: '#2c3e50',
-                  secondary: '#546e7a',
+                  primary: '#1f2937',
+                  secondary: '#6b7280',
                 },
                 divider: 'rgba(0, 0, 0, 0.08)',
+                error: {
+                  main: '#ef4444',
+                },
+                success: {
+                  main: '#10b981',
+                },
+                warning: {
+                  main: '#f59e0b',
+                },
+                info: {
+                  main: '#3b82f6',
+                },
               }
             : {
-                // Dark mode colors
+                // Dark mode colors - Soft and Easy on Eyes
                 primary: {
-                  main: '#667eea',
-                  light: '#8b9aee',
-                  dark: '#4d5fc7',
+                  main: '#8b9aee',
+                  light: '#a5b2f3',
+                  dark: '#667eea',
                   contrastText: '#fff',
                 },
                 secondary: {
-                  main: '#764ba2',
-                  light: '#9568b8',
-                  dark: '#5a3a7d',
+                  main: '#9568b8',
+                  light: '#b088cf',
+                  dark: '#764ba2',
                   contrastText: '#fff',
                 },
                 background: {
-                  default: '#121212',
-                  paper: '#1e1e1e',
+                  default: '#0f1419',
+                  paper: '#1a1f2e',
                 },
                 text: {
-                  primary: '#ffffff',
-                  secondary: '#b0b0b0',
+                  primary: '#e5e7eb',
+                  secondary: '#9ca3af',
                 },
                 divider: 'rgba(255, 255, 255, 0.08)',
+                error: {
+                  main: '#f87171',
+                },
+                success: {
+                  main: '#34d399',
+                },
+                warning: {
+                  main: '#fbbf24',
+                },
+                info: {
+                  main: '#60a5fa',
+                },
               }),
         },
         typography: {
@@ -198,62 +222,32 @@ export const ThemeProvider = ({ children }) => {
             fontWeight: 600,
           },
         },
-        shape: {
-          borderRadius: 12,
-        },
         components: {
           MuiButton: {
             styleOverrides: {
               root: {
-                borderRadius: 12,
-                padding: '10px 24px',
-                fontSize: '0.95rem',
-                boxShadow: 'none',
-                '&:hover': {
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                },
-              },
-              contained: {
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5568d3 0%, #623d85 100%)',
-                },
-              },
-            },
-          },
-          MuiTextField: {
-            styleOverrides: {
-              root: {
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 12,
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                  },
-                  '&.Mui-focused': {
-                    transform: 'translateY(-2px)',
-                  },
-                },
+                borderRadius: 8,
+                textTransform: 'none',
+                fontWeight: 600,
+                padding: '8px 16px',
               },
             },
           },
           MuiPaper: {
             styleOverrides: {
               root: {
-                borderRadius: 16,
-                boxShadow: mode === 'light'
-                  ? '0 8px 32px rgba(0, 0, 0, 0.08)'
-                  : '0 8px 32px rgba(0, 0, 0, 0.4)',
+                backgroundImage: 'none',
               },
             },
           },
-          MuiAvatar: {
+          MuiIconButton: {
             styleOverrides: {
               root: {
-                border: mode === 'light' 
-                  ? '3px solid #fff'
-                  : '3px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                '&:hover': {
+                  backgroundColor: mode === 'light' 
+                    ? 'rgba(102, 126, 234, 0.08)' 
+                    : 'rgba(139, 154, 238, 0.08)',
+                },
               },
             },
           },

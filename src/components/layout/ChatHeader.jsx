@@ -32,6 +32,7 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
         borderBottom: '1px solid',
         borderColor: 'divider',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        overflow: 'hidden',
       }}
     >
       <Stack
@@ -41,6 +42,8 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
         sx={{
           py: 1.5,
           px: 2,
+          maxWidth: '100%',
+          overflow: 'hidden',
         }}
       >
         {/* Back Button (Mobile) */}
@@ -58,9 +61,14 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
           direction="row"
           alignItems="center"
           spacing={1.5}
-          sx={{ flex: 1, cursor: 'pointer' }}
+          sx={{ 
+            flex: 1, 
+            cursor: 'pointer',
+            minWidth: 0,
+            overflow: 'hidden',
+          }}
         >
-          <Box sx={{ position: 'relative' }}>
+          <Box sx={{ position: 'relative', flexShrink: 0 }}>
             <Avatar
               src={displayAvatar}
               sx={{
@@ -92,8 +100,16 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
             )}
           </Box>
 
-          <Box>
-            <Typography variant="h6" fontWeight="bold">
+          <Box sx={{ minWidth: 0, overflow: 'hidden', flex: 1 }}>
+            <Typography 
+              variant="h6" 
+              fontWeight="bold"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {displayName}
             </Typography>
             
