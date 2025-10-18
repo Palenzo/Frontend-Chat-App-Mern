@@ -344,7 +344,7 @@ export const WebRTCProvider = ({ children, user }) => {
         return;
       }
 
-      console.log('Accepting call from:', incomingCall.caller.name);
+      console.log('📱 Step 1: Accepting call from:', incomingCall.caller.name);
       isConnecting.current = true;
       
       setCallType(incomingCall.callType);
@@ -356,9 +356,11 @@ export const WebRTCProvider = ({ children, user }) => {
         isCaller: false,
       });
 
+      console.log('📱 Step 2: Getting user media...');
       // Get local media stream
       const stream = await getUserMedia(incomingCall.callType);
       setLocalStream(stream);
+      console.log('📱 Step 3: Local stream obtained');
 
       // Set connection timeout (30 seconds)
       connectionTimeout.current = setTimeout(() => {
@@ -370,31 +372,38 @@ export const WebRTCProvider = ({ children, user }) => {
         }
       }, 30000);
 
+      console.log('📱 Step 4: Creating peer connection...');
       // Create peer connection
       const pc = createPeerConnection(incomingCall.caller._id, incomingCall.callId);
 
+      console.log('📱 Step 5: Adding local tracks to peer connection...');
       // Add local stream tracks
       stream.getTracks().forEach((track) => {
-        console.log('Adding track:', track.kind);
+        console.log('  ➕ Adding track:', track.kind);
         pc.addTrack(track, stream);
       });
 
-      // Set remote description (offer from caller)
+      console.log('📱 Step 6: Setting remote description from offer...');
+      // FIX: Set remote description (offer from caller) FIRST
       if (incomingCall.offer) {
-        console.log('Setting remote description from offer');
         await pc.setRemoteDescription(new RTCSessionDescription(incomingCall.offer));
+        console.log('✅ Remote description set from offer');
       } else {
-        console.warn('No offer found in incoming call');
+        console.error('❌ No offer found in incoming call!');
+        throw new Error('No offer received from caller');
       }
 
       // Wait a bit for setup
+      console.log('📱 Step 7: Waiting for connection setup...');
       await new Promise(resolve => setTimeout(resolve, 300));
 
+      console.log('📱 Step 8: Creating answer...');
       // Create and send answer
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
-      console.log('Answer created and set as local description');
+      console.log('📱 Step 9: Answer created and set as local description');
 
+      console.log('📱 Step 10: Sending answer to caller...');
       // Send answer to caller
       socket.emit(WEBRTC_ANSWER, {
         answer,
@@ -402,6 +411,7 @@ export const WebRTCProvider = ({ children, user }) => {
         callId: incomingCall.callId,
       });
 
+      console.log('📱 Step 11: Notifying backend call accepted...');
       // Notify backend that call was accepted
       socket.emit(CALL_ACCEPTED, {
         callId: incomingCall.callId,
@@ -411,10 +421,10 @@ export const WebRTCProvider = ({ children, user }) => {
       // Clear incoming call state
       setIncomingCall(null);
 
-      console.log('Call accepted, answer sent');
+      console.log('✅ Call accepted successfully, answer sent');
       toast.success('Call accepted');
     } catch (error) {
-      console.error('Error accepting call:', error);
+      console.error('❌ Error accepting call:', error);
       toast.error('Failed to accept call');
       isConnecting.current = false;
       cleanup();
@@ -550,10 +560,10 @@ export const WebRTCProvider = ({ children, user }) => {
       toast(`Incoming ${callType} call from ${caller.name}`, { icon: '📞', duration: 10000 });
     });
 
-    // WebRTC Offer received (with incoming call)
-    socket.on(WEBRTC_OFFER, ({ offer }) => {
-      console.log('WebRTC offer received');
-      setIncomingCall((prev) => (prev ? { ...prev, offer } : null));
+    // WebRTC Offer received (with incoming call) - FIX: Accept all parameters from backend
+    socket.on(WEBRTC_OFFER, ({ offer, callerId, callId }) => {
+      console.log('WebRTC offer received from callerId:', callerId, 'callId:', callId);
+      setIncomingCall((prev) => (prev ? { ...prev, offer, callerId, callId } : null));
     });
 
     // WebRTC Answer received (caller receives this)

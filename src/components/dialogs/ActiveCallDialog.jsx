@@ -7,7 +7,6 @@ import {
   Avatar,
   Stack,
   Paper,
-  Fade,
   Zoom,
 } from '@mui/material';
 import {
@@ -17,7 +16,6 @@ import {
   Videocam as VideocamIcon,
   VideocamOff as VideocamOffIcon,
   Fullscreen as FullscreenIcon,
-  FlipCameraIos as FlipCameraIosIcon,
 } from '@mui/icons-material';
 import { useCall } from '../../context/CallContext';
 import { motion, AnimatePresence } from 'framer-motion';
