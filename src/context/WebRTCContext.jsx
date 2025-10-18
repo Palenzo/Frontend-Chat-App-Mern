@@ -99,10 +99,13 @@ export const WebRTCProvider = ({ children, user }) => {
         video: type === 'video' ? { width: 1280, height: 720 } : false,
         audio: true,
       };
+      console.log('🎥 Requesting media access:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('✅ Media access granted, tracks:', stream.getTracks().map(t => t.kind));
       return stream;
     } catch (error) {
-      console.error('Error accessing media devices:', error);
+      console.error('❌ Error accessing media devices:', error);
+      console.error('Error name:', error.name, 'Message:', error.message);
       toast.error('Failed to access camera/microphone');
       throw error;
     }
@@ -206,24 +209,23 @@ export const WebRTCProvider = ({ children, user }) => {
   // ============================================
 
   const initiateCall = async (receiverId, receiver, type = 'video') => {
-    try {
-      if (isConnecting.current) {
-        console.log('Already connecting to a call');
-        return;
-      }
+    // Prevent multiple simultaneous calls
+    if (isConnecting.current || peerConnection.current) {
+      console.log('⚠️ Already in a call or connecting');
+      toast.error('Already in a call');
+      return;
+    }
 
-      console.log('Initiating call to:', receiver.name);
+    try {
+      console.log('📞 Step 1: Initiating call to:', receiver.name);
       isConnecting.current = true;
       setCallType(type);
 
-      // Get local media stream
-      const stream = await getUserMedia(type);
-      setLocalStream(stream);
-
-      // Generate call ID
+      // Generate call ID first
       const callId = `${user._id}-${receiverId}-${Date.now()}`;
+      console.log('📞 Step 2: Call ID generated:', callId);
 
-      // Setup call state
+      // Setup call state early
       setCurrentCall({
         callId,
         receiver,
@@ -231,39 +233,69 @@ export const WebRTCProvider = ({ children, user }) => {
         type,
         isCaller: true,
       });
+      console.log('📞 Step 3: Call state set');
 
-      // Set connection timeout (30 seconds)
+      // Get local media stream
+      console.log('📞 Step 4: Getting user media...');
+      const stream = await getUserMedia(type);
+      setLocalStream(stream);
+      console.log('📞 Step 5: Local stream set');
+
+      // Create peer connection BEFORE adding tracks
+      console.log('📞 Step 6: Creating peer connection...');
+      const pc = createPeerConnection(receiverId, callId);
+      console.log('📞 Step 7: Peer connection created, state:', pc.signalingState);
+
+      // Verify peer connection is in correct state
+      if (pc.signalingState === 'closed') {
+        throw new Error('Peer connection closed unexpectedly after creation');
+      }
+
+      // Add local stream tracks to peer connection
+      console.log('📞 Step 8: Adding tracks to peer connection...');
+      stream.getTracks().forEach((track) => {
+        console.log('  ➕ Adding track:', track.kind);
+        pc.addTrack(track, stream);
+      });
+      console.log('📞 Step 9: All tracks added');
+
+      // Set connection timeout AFTER peer connection is created
+      console.log('📞 Step 10: Setting connection timeout...');
       connectionTimeout.current = setTimeout(() => {
-        if (!peerConnection.current || 
+        if (peerConnection.current && 
             peerConnection.current.connectionState !== 'connected') {
-          console.error('Connection timeout');
+          console.error('⏱️ Connection timeout');
           toast.error('Connection timeout. Please try again.');
           endCall();
         }
       }, 30000);
 
-      // Create peer connection
-      const pc = createPeerConnection(receiverId, callId);
+      // Wait briefly for tracks to be added
+      console.log('📞 Step 11: Waiting for track setup...');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      console.log('📞 Step 12: Track setup complete');
 
-      // Add local stream tracks to peer connection
-      stream.getTracks().forEach((track) => {
-        console.log('Adding track:', track.kind);
-        pc.addTrack(track, stream);
-      });
-
-      // Wait a bit for ICE gathering to start
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Verify peer connection is still valid before creating offer
+      console.log('📞 Step 13: Verifying peer connection state:', 
+        peerConnection.current ? peerConnection.current.signalingState : 'null');
+      
+      if (!peerConnection.current || pc.signalingState === 'closed') {
+        throw new Error('Peer connection was closed before offer creation');
+      }
 
       // Create and send offer
+      console.log('📞 Step 14: Creating offer...');
       const offer = await pc.createOffer({
         offerToReceiveAudio: true,
         offerToReceiveVideo: type === 'video',
       });
+      console.log('📞 Step 15: Offer created');
       
       await pc.setLocalDescription(offer);
-      console.log('Offer created and set as local description');
+      console.log('📞 Step 16: Offer set as local description');
 
       // Emit call initiation to backend
+      console.log('📞 Step 17: Emitting CALL_INITIATED event...');
       socket.emit(CALL_INITIATED, {
         callId,
         receiverId,
@@ -271,19 +303,32 @@ export const WebRTCProvider = ({ children, user }) => {
       });
 
       // Send WebRTC offer
+      console.log('📞 Step 18: Sending WebRTC offer...');
       socket.emit(WEBRTC_OFFER, {
         offer,
         receiverId,
         callId,
       });
 
-      console.log('Call initiated, waiting for answer...');
+      console.log('✅ Call initiated successfully, waiting for answer...');
       toast.loading('Calling...', { duration: 3000 });
     } catch (error) {
-      console.error('Error initiating call:', error);
-      toast.error('Failed to initiate call');
+      console.error('❌ Error initiating call at step:', error);
+      console.error('Stack trace:', error.stack);
+      
+      // More specific error messages
+      if (error.name === 'NotAllowedError') {
+        toast.error('Camera/Microphone access denied');
+      } else if (error.name === 'NotFoundError') {
+        toast.error('Camera/Microphone not found');
+      } else if (error.message?.includes('closed')) {
+        toast.error('Connection error. Please try again.');
+      } else {
+        toast.error('Failed to initiate call');
+      }
+      
       isConnecting.current = false;
-      cleanup();
+      cleanup(true); // Force cleanup on error
     }
   };
 
@@ -410,7 +455,7 @@ export const WebRTCProvider = ({ children, user }) => {
       userId: otherUserId,
     });
 
-    cleanup();
+    cleanup(true); // Force cleanup
     toast('Call ended', { icon: '📞' });
   };
 
@@ -418,7 +463,14 @@ export const WebRTCProvider = ({ children, user }) => {
   // CLEANUP
   // ============================================
 
-  const cleanup = useCallback(() => {
+  const cleanup = useCallback((force = false) => {
+    // Don't cleanup if we're in the middle of establishing a connection
+    // unless forced
+    if (!force && isConnecting.current && !isCallActive) {
+      console.log('Skipping cleanup - call is still being established');
+      return;
+    }
+
     console.log('Cleaning up call resources');
 
     // Clear timeouts
@@ -458,7 +510,7 @@ export const WebRTCProvider = ({ children, user }) => {
     setRemoteStream(null);
     setIsMuted(false);
     setIsVideoOff(false);
-  }, [localStream]);
+  }, [localStream, isCallActive]);
 
   // ============================================
   // MEDIA CONTROLS
@@ -553,21 +605,21 @@ export const WebRTCProvider = ({ children, user }) => {
     socket.on(CALL_REJECTED, () => {
       console.log('Call rejected');
       toast.error('Call was rejected');
-      cleanup();
+      cleanup(true); // Force cleanup
     });
 
     // Call ended by other user
     socket.on(CALL_ENDED, () => {
       console.log('Call ended by other user');
       toast('Call ended', { icon: '📞' });
-      cleanup();
+      cleanup(true); // Force cleanup
     });
 
     // User unavailable
     socket.on(CALL_UNAVAILABLE, ({ message }) => {
       console.log('User unavailable:', message);
       toast.error(message || 'User is not available');
-      cleanup();
+      cleanup(true); // Force cleanup
     });
 
     return () => {
@@ -585,7 +637,7 @@ export const WebRTCProvider = ({ children, user }) => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      cleanup();
+      cleanup(true); // Force cleanup on unmount
     };
   }, [cleanup]);
 
