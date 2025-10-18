@@ -476,12 +476,12 @@ export const WebRTCProvider = ({ children, user }) => {
   const cleanup = useCallback((force = false) => {
     // Don't cleanup if we're in the middle of establishing a connection
     // unless forced
-    if (!force && isConnecting.current && !isCallActive) {
-      console.log('Skipping cleanup - call is still being established');
+    if (!force && isConnecting.current) {
+      console.log('⚠️ Skipping cleanup - call is still being established');
       return;
     }
 
-    console.log('Cleaning up call resources');
+    console.log('🧹 Cleaning up call resources');
 
     // Clear timeouts
     if (connectionTimeout.current) {
@@ -489,20 +489,22 @@ export const WebRTCProvider = ({ children, user }) => {
       connectionTimeout.current = null;
     }
 
-    // Stop all tracks
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        track.stop();
-        console.log('Stopped track:', track.kind);
-      });
-      setLocalStream(null);
-    }
+    // Stop all tracks - use callback to get current localStream
+    setLocalStream((currentStream) => {
+      if (currentStream) {
+        currentStream.getTracks().forEach((track) => {
+          track.stop();
+          console.log('  🛑 Stopped track:', track.kind);
+        });
+      }
+      return null;
+    });
 
     // Close peer connection
     if (peerConnection.current) {
       peerConnection.current.close();
       peerConnection.current = null;
-      console.log('Peer connection closed');
+      console.log('  🔌 Peer connection closed');
     }
 
     // Stop timer
@@ -520,7 +522,7 @@ export const WebRTCProvider = ({ children, user }) => {
     setRemoteStream(null);
     setIsMuted(false);
     setIsVideoOff(false);
-  }, [localStream, isCallActive]);
+  }, []); // FIX: Empty deps - cleanup doesn't need to change
 
   // ============================================
   // MEDIA CONTROLS
@@ -642,14 +644,16 @@ export const WebRTCProvider = ({ children, user }) => {
       socket.off(CALL_ENDED);
       socket.off(CALL_UNAVAILABLE);
     };
-  }, [socket, cleanup]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]); // FIX: Removed cleanup from deps - it never changes now
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       cleanup(true); // Force cleanup on unmount
     };
-  }, [cleanup]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // FIX: Empty deps - only run on mount/unmount
 
   // ============================================
   // CONTEXT VALUE
