@@ -278,9 +278,12 @@ export const WebRTCProvider = ({ children, user }) => {
       // Verify peer connection is still valid before creating offer
       console.log('📞 Step 13: Verifying peer connection state:', 
         peerConnection.current ? peerConnection.current.signalingState : 'null');
-      
-      if (!peerConnection.current || pc.signalingState === 'closed') {
-        throw new Error('Peer connection was closed before offer creation');
+
+      // If cleanup already ran (e.g., user unavailable), abort gracefully
+      if (!peerConnection.current || peerConnection.current !== pc || pc.signalingState === 'closed') {
+        console.warn('⚠️ Call aborted before offer creation (likely user unavailable or call cancelled).');
+        isConnecting.current = false;
+        return;
       }
 
       // Create and send offer
