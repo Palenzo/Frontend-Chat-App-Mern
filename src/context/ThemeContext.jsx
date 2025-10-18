@@ -12,8 +12,8 @@ export const useTheme = () => {
   return context;
 };
 
-const THEME_STORAGE_KEY = 'chaткroo-theme';
-const WALLPAPER_STORAGE_KEY = 'chaткroo-wallpaper';
+const THEME_STORAGE_KEY = 'chatkroo-theme';
+const WALLPAPER_STORAGE_KEY = 'chatkroo-wallpaper';
 
 // Preset wallpapers
 export const presetWallpapers = [

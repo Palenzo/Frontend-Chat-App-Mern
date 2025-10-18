@@ -24,10 +24,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { LayoutLoader } from "../components/layout/Loaders";
 import AvatarCard from "../components/shared/AvatarCard";
 import { Link } from "../components/styles/StyledComponents";
-import { bgGradient, matBlack } from "../constants/color";
+import { matBlack } from "../constants/color";
 import { useDispatch, useSelector } from "react-redux";
 import UserItem from "../components/shared/UserItem";
 import { useAsyncMutation, useErrors } from "../hooks/hook";
+import { useTheme } from "../context/ThemeContext";
 import {
   useChatDetailsQuery,
   useDeleteChatMutation,
@@ -48,6 +49,7 @@ const Groups = () => {
   const chatId = useSearchParams()[0].get("group");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { wallpaper } = useTheme();
 
   const { isAddMember } = useSelector((state) => state.misc);
 
@@ -290,6 +292,15 @@ const Groups = () => {
           alignItems: "center",
           position: "relative",
           padding: "1rem 3rem",
+          ...(wallpaper?.type === 'gradient' 
+            ? { background: wallpaper.value }
+            : {
+                backgroundColor: wallpaper?.backgroundColor || '#fff',
+                backgroundImage: wallpaper?.value ? `url(${wallpaper.value})` : 'none',
+                backgroundRepeat: 'repeat',
+                backgroundSize: 'auto'
+              }
+          )
         }}
       >
         {IconBtns}
@@ -381,26 +392,38 @@ const Groups = () => {
   );
 };
 
-const GroupsList = ({ w = "100%", myGroups = [], chatId }) => (
-  <Stack
-    width={w}
-    sx={{
-      backgroundImage: bgGradient,
-      height: "100vh",
-      overflow: "auto",
-    }}
-  >
-    {myGroups.length > 0 ? (
-      myGroups.map((group) => (
-        <GroupListItem group={group} chatId={chatId} key={group._id} />
-      ))
-    ) : (
-      <Typography textAlign={"center"} padding="1rem">
-        No groups
-      </Typography>
-    )}
-  </Stack>
-);
+const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
+  const { wallpaper } = useTheme();
+  
+  return (
+    <Stack
+      width={w}
+      sx={{
+        height: "100vh",
+        overflow: "auto",
+        ...(wallpaper?.type === 'gradient' 
+          ? { background: wallpaper.value }
+          : {
+              backgroundColor: wallpaper?.backgroundColor || '#fff',
+              backgroundImage: wallpaper?.value ? `url(${wallpaper.value})` : 'none',
+              backgroundRepeat: 'repeat',
+              backgroundSize: 'auto'
+            }
+        )
+      }}
+    >
+      {myGroups.length > 0 ? (
+        myGroups.map((group) => (
+          <GroupListItem group={group} chatId={chatId} key={group._id} />
+        ))
+      ) : (
+        <Typography textAlign={"center"} padding="1rem">
+          No groups
+        </Typography>
+      )}
+    </Stack>
+  );
+};
 
 const GroupListItem = memo(({ group, chatId }) => {
   const { name, avatar, _id } = group;
