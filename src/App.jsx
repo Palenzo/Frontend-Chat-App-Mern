@@ -8,10 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socket";
-import { CallProvider } from "./context/CallContext";
-import { StreamVideoProvider } from "./context/StreamVideoContext";
+import { WebRTCProvider } from "./context/WebRTCContext";
 import IncomingCallDialog from "./components/dialogs/IncomingCallDialog";
-import ActiveCallDialog from "./components/dialogs/ActiveCallDialog";
+import VideoCallDialog from "./components/dialogs/VideoCallDialog";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -44,19 +43,18 @@ const App = () => {
   ) : (
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
-        <StreamVideoProvider>
-          <Routes>
-            <Route
-              element={
-                <SocketProvider>
-                  <CallProvider user={user}>
-                    <ProtectRoute user={user} />
-                    <IncomingCallDialog />
-                    <ActiveCallDialog />
-                  </CallProvider>
-                </SocketProvider>
-              }
-            >
+        <Routes>
+          <Route
+            element={
+              <SocketProvider>
+                <WebRTCProvider user={user}>
+                  <ProtectRoute user={user} />
+                  <IncomingCallDialog />
+                  <VideoCallDialog open={true} />
+                </WebRTCProvider>
+              </SocketProvider>
+            }
+          >
               <Route path="/" element={<Home />} />
               <Route path="/chat/:chatId" element={<Chat />} />
               <Route path="/groups" element={<Groups />} />
@@ -79,12 +77,11 @@ const App = () => {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </StreamVideoProvider>
-      </Suspense>
+        </Suspense>
 
-      <Toaster position="bottom-center" />
-    </BrowserRouter>
-  );
-};
-
-export default App;
+        <Toaster position="bottom-center" />
+      </BrowserRouter>
+    );
+  };
+  
+  export default App;
