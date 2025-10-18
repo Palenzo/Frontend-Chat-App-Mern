@@ -173,14 +173,17 @@ const ThemeSettings = ({ open, onClose }) => {
                       sx={{
                         width: '100%',
                         height: '100%',
-                        background: preset.type === 'gradient' 
-                          ? preset.value 
-                          : preset.value,
-                        backgroundImage: preset.type === 'pattern' 
-                          ? preset.pattern 
-                          : 'none',
-                        backgroundSize: preset.type === 'pattern' ? 'auto' : 'cover',
-                        backgroundPosition: 'center',
+                        ...(preset.type === 'gradient' 
+                          ? {
+                              background: preset.value,
+                            }
+                          : {
+                              backgroundColor: preset.value,
+                              backgroundImage: preset.pattern,
+                              backgroundSize: 'auto',
+                              backgroundRepeat: 'repeat',
+                            }
+                        ),
                       }}
                     />
 

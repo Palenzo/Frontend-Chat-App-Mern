@@ -208,11 +208,21 @@ const Chat = ({ chatId, user }) => {
         spacing={"1rem"}
         height={"calc(90% - 60px)"}
         sx={{
-          background: wallpaper.type === 'gradient' ? wallpaper.value : wallpaper.value,
-          backgroundImage: wallpaper.pattern || 'none',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
+          ...(wallpaper.type === 'gradient' 
+            ? {
+                background: wallpaper.value,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundAttachment: 'fixed',
+              }
+            : {
+                backgroundColor: wallpaper.value,
+                backgroundImage: wallpaper.pattern,
+                backgroundSize: 'auto',
+                backgroundRepeat: 'repeat',
+                backgroundAttachment: 'fixed',
+              }
+          ),
           overflowX: "hidden",
           overflowY: "auto",
         }}
