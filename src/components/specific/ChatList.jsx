@@ -1,5 +1,6 @@
-import { Stack, Typography, Box, Button, Tooltip } from "@mui/material";
-import React, { useState } from "react";
+import { Stack, Typography, Box, Button, Tooltip, LinearProgress } from "@mui/material";
+import PropTypes from "prop-types";
+import { useState } from "react";
 import ChatItem from "../shared/ChatItem";
 import { SmartToy as AIIcon } from "@mui/icons-material";
 import { useCreateOrGetAIChatMutation } from "../../redux/api/api";
@@ -18,6 +19,7 @@ const ChatList = ({
     },
   ],
   handleDeleteChat,
+  isRefreshing = false,
 }) => {
   const [createAIChat, { isLoading }] = useCreateOrGetAIChatMutation();
   const [hasAIChat, setHasAIChat] = useState(
@@ -26,7 +28,7 @@ const ChatList = ({
 
   const handleCreateAIChat = async () => {
     try {
-      const result = await createAIChat().unwrap();
+  await createAIChat().unwrap();
       toast.success("AI chat is ready! Start chatting with Binod 🤖");
       setHasAIChat(true);
     } catch (error) {
@@ -37,6 +39,7 @@ const ChatList = ({
 
   return (
     <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"}>
+      {isRefreshing && <LinearProgress sx={{ height: 3 }} />}
       {/* AI Chat Button */}
       {!hasAIChat && (
         <Box sx={{ p: 2, borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
@@ -113,3 +116,18 @@ const ChatList = ({
 };
 
 export default ChatList;
+
+ChatList.propTypes = {
+  w: PropTypes.string,
+  chats: PropTypes.arrayOf(PropTypes.object),
+  chatId: PropTypes.string,
+  onlineUsers: PropTypes.arrayOf(PropTypes.string),
+  newMessagesAlert: PropTypes.arrayOf(
+    PropTypes.shape({
+      chatId: PropTypes.string,
+      count: PropTypes.number,
+    })
+  ),
+  handleDeleteChat: PropTypes.func,
+  isRefreshing: PropTypes.bool,
+};

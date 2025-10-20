@@ -1,7 +1,7 @@
 import { Drawer, Grid, Skeleton } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
@@ -28,9 +28,8 @@ import Profile from "../specific/Profile";
 import Header from "./Header";
 
 const AppLayout = () => (WrappedComponent) => {
-  return (props) => {
+  const LayoutComponent = (props) => {
     const params = useParams();
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const socket = getSocket();
 
@@ -38,6 +37,7 @@ const AppLayout = () => (WrappedComponent) => {
     const deleteMenuAnchor = useRef(null);
 
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [isRefreshingChats, setIsRefreshingChats] = useState(false);
 
     const { isMobile } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
@@ -64,17 +64,22 @@ const AppLayout = () => (WrappedComponent) => {
         if (data.chatId === chatId) return;
         dispatch(setNewMessagesAlert(data));
       },
-      [chatId]
+      [chatId, dispatch]
     );
 
     const newRequestListener = useCallback(() => {
       dispatch(incrementNotification());
     }, [dispatch]);
 
-    const refetchListener = useCallback(() => {
-      refetch();
-      navigate("/");
-    }, [refetch, navigate]);
+    const refetchListener = useCallback(async () => {
+      setIsRefreshingChats(true);
+
+      try {
+        await refetch();
+      } finally {
+        setIsRefreshingChats(false);
+      }
+    }, [refetch]);
 
     const onlineUsersListener = useCallback((data) => {
       setOnlineUsers(data);
@@ -110,6 +115,7 @@ const AppLayout = () => (WrappedComponent) => {
               handleDeleteChat={handleDeleteChat}
               newMessagesAlert={newMessagesAlert}
               onlineUsers={onlineUsers}
+              isRefreshing={isRefreshingChats}
             />
           </Drawer>
         )}
@@ -133,6 +139,7 @@ const AppLayout = () => (WrappedComponent) => {
                 handleDeleteChat={handleDeleteChat}
                 newMessagesAlert={newMessagesAlert}
                 onlineUsers={onlineUsers}
+                isRefreshing={isRefreshingChats}
               />
             )}
           </Grid>
@@ -157,6 +164,12 @@ const AppLayout = () => (WrappedComponent) => {
       </>
     );
   };
+
+  LayoutComponent.displayName = `AppLayout(${
+    WrappedComponent.displayName || WrappedComponent.name || "Component"
+  })`;
+
+  return LayoutComponent;
 };
 
 export default AppLayout;
