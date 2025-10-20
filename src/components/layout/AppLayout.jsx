@@ -36,8 +36,9 @@ const AppLayout = () => (WrappedComponent) => {
     const chatId = params.chatId;
     const deleteMenuAnchor = useRef(null);
 
-    const [onlineUsers, setOnlineUsers] = useState([]);
-    const [isRefreshingChats, setIsRefreshingChats] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isRefreshingChats, setIsRefreshingChats] = useState(false);
+  const [chatListVersion, setChatListVersion] = useState(0);
 
     const { isMobile } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
@@ -59,27 +60,32 @@ const AppLayout = () => (WrappedComponent) => {
 
     const handleMobileClose = () => dispatch(setIsMobile(false));
 
+    const refreshChats = useCallback(async () => {
+      setIsRefreshingChats(true);
+
+      try {
+        await refetch();
+        setChatListVersion((prev) => prev + 1);
+      } finally {
+        setIsRefreshingChats(false);
+      }
+    }, [refetch]);
+
     const newMessageAlertListener = useCallback(
       (data) => {
+        refreshChats();
+
         if (data.chatId === chatId) return;
         dispatch(setNewMessagesAlert(data));
       },
-      [chatId, dispatch]
+      [chatId, dispatch, refreshChats]
     );
 
     const newRequestListener = useCallback(() => {
       dispatch(incrementNotification());
     }, [dispatch]);
 
-    const refetchListener = useCallback(async () => {
-      setIsRefreshingChats(true);
-
-      try {
-        await refetch();
-      } finally {
-        setIsRefreshingChats(false);
-      }
-    }, [refetch]);
+    const refetchListener = refreshChats;
 
     const onlineUsersListener = useCallback((data) => {
       setOnlineUsers(data);
@@ -116,6 +122,7 @@ const AppLayout = () => (WrappedComponent) => {
               newMessagesAlert={newMessagesAlert}
               onlineUsers={onlineUsers}
               isRefreshing={isRefreshingChats}
+              version={chatListVersion}
             />
           </Drawer>
         )}
@@ -140,6 +147,7 @@ const AppLayout = () => (WrappedComponent) => {
                 newMessagesAlert={newMessagesAlert}
                 onlineUsers={onlineUsers}
                 isRefreshing={isRefreshingChats}
+                version={chatListVersion}
               />
             )}
           </Grid>

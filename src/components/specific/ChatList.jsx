@@ -20,6 +20,7 @@ const ChatList = ({
   ],
   handleDeleteChat,
   isRefreshing = false,
+  version = 0,
 }) => {
   const [createAIChat, { isLoading }] = useCreateOrGetAIChatMutation();
   const [hasAIChat, setHasAIChat] = useState(
@@ -38,7 +39,13 @@ const ChatList = ({
   };
 
   return (
-    <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"}>
+    <Stack
+      width={w}
+      direction={"column"}
+      overflow={"auto"}
+      height={"100%"}
+      data-version={version}
+    >
       {isRefreshing && <LinearProgress sx={{ height: 3 }} />}
       {/* AI Chat Button */}
       {!hasAIChat && (
@@ -130,4 +137,5 @@ ChatList.propTypes = {
   ),
   handleDeleteChat: PropTypes.func,
   isRefreshing: PropTypes.bool,
+  version: PropTypes.number,
 };
