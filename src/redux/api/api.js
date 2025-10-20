@@ -159,6 +159,15 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
+
+    createOrGetAIChat: builder.mutation({
+      query: () => ({
+        url: "user/ai-chat",
+        method: "POST",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+    }),
   }),
 });
 
@@ -180,4 +189,5 @@ export const {
   useAddGroupMembersMutation,
   useDeleteChatMutation,
   useLeaveGroupMutation,
+  useCreateOrGetAIChatMutation,
 } = api;

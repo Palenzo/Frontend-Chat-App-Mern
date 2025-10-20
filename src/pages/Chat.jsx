@@ -34,11 +34,13 @@ import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loaders";
 import { useNavigate } from "react-router-dom";
 import ChatHeader from "../components/layout/ChatHeader";
+import { useTheme } from "../context/ThemeContext";
 
 const Chat = ({ chatId, user }) => {
   const socket = getSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { wallpaper } = useTheme();
 
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -53,7 +55,7 @@ const Chat = ({ chatId, user }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const typingTimeout = useRef(null);
 
-  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+  const chatDetails = useChatDetailsQuery({ chatId, populate: true, skip: !chatId });
 
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
 
@@ -204,11 +206,39 @@ const Chat = ({ chatId, user }) => {
         boxSizing={"border-box"}
         padding={"1rem"}
         spacing={"1rem"}
-        bgcolor={grayColor}
         height={"calc(90% - 60px)"}
         sx={{
+          ...(wallpaper.type === 'gradient' 
+            ? {
+                background: wallpaper.value,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundAttachment: 'fixed',
+              }
+            : {
+                backgroundColor: wallpaper.value,
+                backgroundImage: wallpaper.pattern,
+                backgroundSize: 'auto',
+                backgroundRepeat: 'repeat',
+                backgroundAttachment: 'fixed',
+              }
+          ),
           overflowX: "hidden",
           overflowY: "auto",
+          maxWidth: "100%",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "rgba(0,0,0,0.05)",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "rgba(102, 126, 234, 0.5)",
+            borderRadius: "10px",
+            "&:hover": {
+              background: "rgba(102, 126, 234, 0.7)",
+            },
+          },
         }}
       >
         {allMessages.map((i) => (

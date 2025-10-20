@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socket";
-import { CallProvider } from "./context/CallContext";
+import { WebRTCProvider } from "./context/WebRTCContext";
 import IncomingCallDialog from "./components/dialogs/IncomingCallDialog";
-import ActiveCallDialog from "./components/dialogs/ActiveCallDialog";
+import VideoCallDialog from "./components/dialogs/VideoCallDialog";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -47,41 +47,41 @@ const App = () => {
           <Route
             element={
               <SocketProvider>
-                <CallProvider user={user}>
+                <WebRTCProvider user={user}>
                   <ProtectRoute user={user} />
                   <IncomingCallDialog />
-                  <ActiveCallDialog />
-                </CallProvider>
+                  <VideoCallDialog open={true} />
+                </WebRTCProvider>
               </SocketProvider>
             }
           >
-            <Route path="/" element={<Home />} />
-            <Route path="/chat/:chatId" element={<Chat />} />
-            <Route path="/groups" element={<Groups />} />
-          </Route>
+              <Route path="/" element={<Home />} />
+              <Route path="/chat/:chatId" element={<Chat />} />
+              <Route path="/groups" element={<Groups />} />
+            </Route>
 
-          <Route
-            path="/login"
-            element={
-              <ProtectRoute user={!user} redirect="/">
-                <Login />
-              </ProtectRoute>
-            }
-          />
+            <Route
+              path="/login"
+              element={
+                <ProtectRoute user={!user} redirect="/">
+                  <Login />
+                </ProtectRoute>
+              }
+            />
 
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/chats" element={<ChatManagement />} />
-          <Route path="/admin/messages" element={<MessagesManagement />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/admin/chats" element={<ChatManagement />} />
+            <Route path="/admin/messages" element={<MessagesManagement />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
 
-      <Toaster position="bottom-center" />
-    </BrowserRouter>
-  );
-};
-
-export default App;
+        <Toaster position="bottom-center" />
+      </BrowserRouter>
+    );
+  };
+  
+  export default App;

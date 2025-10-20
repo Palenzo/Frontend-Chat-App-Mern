@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import React, { memo } from "react";
-import { lightBlue } from "../../constants/color";
+import { messageSent, messageSentLight, messageReceived, messageReceivedBorder, textSecondary } from "../../constants/color";
 import moment from "moment";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
@@ -15,51 +15,100 @@ const MessageComponent = ({ message, user }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: "-100%" }}
+      initial={{ opacity: 0, x: sameSender ? "100%" : "-100%" }}
       whileInView={{ opacity: 1, x: 0 }}
       style={{
         alignSelf: sameSender ? "flex-end" : "flex-start",
-        backgroundColor: "white",
-        color: "black",
-        borderRadius: "5px",
-        padding: "0.5rem",
+        maxWidth: "75%",
         width: "fit-content",
       }}
     >
-      {!sameSender && (
-        <Typography color={lightBlue} fontWeight={"600"} variant="caption">
-          {sender.name}
-        </Typography>
-      )}
+      <Box
+        sx={{
+          backgroundColor: sameSender ? messageSent : messageReceived,
+          color: sameSender ? "white" : "black",
+          borderRadius: sameSender ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+          padding: "10px 14px",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+          wordBreak: "break-word",
+          maxWidth: "100%",
+          border: sameSender ? "none" : `1px solid ${messageReceivedBorder}`,
+          boxShadow: sameSender 
+            ? "0 2px 8px rgba(102, 126, 234, 0.25)" 
+            : "0 1px 3px rgba(0, 0, 0, 0.08)",
+        }}
+      >
+        {!sameSender && (
+          <Typography 
+            color={messageSent} 
+            fontWeight="600" 
+            variant="caption"
+            sx={{ mb: 0.5, display: "block" }}
+          >
+            {sender.name}
+          </Typography>
+        )}
 
-      {content && <Typography>{content}</Typography>}
+        {content && (
+          <Typography 
+            sx={{ 
+              whiteSpace: "pre-wrap",
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              maxWidth: "100%",
+            }}
+          >
+            {content}
+          </Typography>
+        )}
 
-      {attachments.length > 0 &&
-        attachments.map((attachment, index) => {
-          const url = attachment.url;
-          const file = fileFormat(url);
+        {attachments.length > 0 &&
+          attachments.map((attachment, index) => {
+            const url = attachment.url;
+            const file = fileFormat(url);
 
-          return (
-            <Box key={index}>
-              <a
-                href={url}
-                target="_blank"
-                download
-                style={{
-                  color: "black",
+            return (
+              <Box 
+                key={index}
+                sx={{
+                  mt: content ? 1 : 0,
+                  maxWidth: "100%",
+                  overflow: "hidden",
                 }}
               >
-                {RenderAttachment(file, url)}
-              </a>
-            </Box>
-          );
-        })}
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  style={{
+                    color: sameSender ? "white" : messageSent,
+                    textDecoration: "underline",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {RenderAttachment(file, url)}
+                </a>
+              </Box>
+            );
+          })}
 
-      <Typography variant="caption" color={"text.secondary"}>
-        {timeAgo}
-      </Typography>
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            color: sameSender ? "rgba(255,255,255,0.8)" : textSecondary,
+            display: "block",
+            mt: 0.5,
+            fontSize: "0.7rem",
+          }}
+        >
+          {timeAgo}
+        </Typography>
+      </Box>
     </motion.div>
   );
 };
 
 export default memo(MessageComponent);
+
