@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
 import { LayoutLoader } from "./components/layout/Loaders";
 import axios from "axios";
@@ -26,6 +26,22 @@ const MessagesManagement = lazy(() =>
   import("./pages/admin/MessageManagement")
 );
 
+// Only mounts the socket + WebRTC providers (and call dialogs) when there is an
+// authenticated user, so a logged-out visit never opens a socket that would just
+// fail auth. Redirects to /login otherwise.
+const ProtectedLayout = ({ user }) =>
+  user ? (
+    <SocketProvider>
+      <WebRTCProvider user={user}>
+        <Outlet />
+        <IncomingCallDialog />
+        <VideoCallDialog open={true} />
+      </WebRTCProvider>
+    </SocketProvider>
+  ) : (
+    <Navigate to="/login" />
+  );
+
 const App = () => {
   const { user, loader } = useSelector((state) => state.auth);
 
@@ -44,21 +60,11 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
-          <Route
-            element={
-              <SocketProvider>
-                <WebRTCProvider user={user}>
-                  <ProtectRoute user={user} />
-                  <IncomingCallDialog />
-                  <VideoCallDialog open={true} />
-                </WebRTCProvider>
-              </SocketProvider>
-            }
-          >
-              <Route path="/" element={<Home />} />
-              <Route path="/chat/:chatId" element={<Chat />} />
-              <Route path="/groups" element={<Groups />} />
-            </Route>
+          <Route element={<ProtectedLayout user={user} />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat/:chatId" element={<Chat />} />
+            <Route path="/groups" element={<Groups />} />
+          </Route>
 
             <Route
               path="/login"
