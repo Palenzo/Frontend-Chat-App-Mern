@@ -12,13 +12,13 @@ import {
   Button,
   CircularProgress,
   Drawer,
-  Grid,
   IconButton,
   Stack,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import React, { Suspense, lazy, memo, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LayoutLoader } from "../components/layout/Loaders";
@@ -149,19 +149,6 @@ const Groups = () => {
   const removeMemberHandler = (userId) => {
     removeMember("Removing Member...", { chatId, userId });
   };
-
-  useEffect(() => {
-    if (chatId) {
-      setGroupName(`Group Name ${chatId}`);
-      setGroupNameUpdatedValue(`Group Name ${chatId}`);
-    }
-
-    return () => {
-      setGroupName("");
-      setGroupNameUpdatedValue("");
-      setIsEdit(false);
-    };
-  }, [chatId]);
 
   const IconBtns = (
     <>
@@ -425,7 +412,7 @@ const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
   );
 };
 
-const GroupListItem = memo(({ group, chatId }) => {
+const GroupListItem = memo(function GroupListItem({ group, chatId }) {
   const { name, avatar, _id } = group;
 
   return (

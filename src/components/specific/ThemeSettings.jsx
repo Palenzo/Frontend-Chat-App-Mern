@@ -7,12 +7,12 @@ import {
   Box,
   Typography,
   Switch,
-  Grid,
   Paper,
   Stack,
   Divider,
   Button,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Close as CloseIcon,
   LightMode as LightModeIcon,

@@ -1,4 +1,5 @@
-import { Drawer, Grid, Skeleton } from "@mui/material";
+import { Drawer, Skeleton } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -20,7 +21,7 @@ import {
   setIsMobile,
   setSelectedDeleteChat,
 } from "../../redux/reducers/misc";
-import { getSocket } from "../../socket";
+import { useSocket } from "../../socket";
 import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
@@ -31,7 +32,7 @@ const AppLayout = () => (WrappedComponent) => {
   const LayoutComponent = (props) => {
     const params = useParams();
     const dispatch = useDispatch();
-    const socket = getSocket();
+    const socket = useSocket();
 
     const chatId = params.chatId;
     const deleteMenuAnchor = useRef(null);

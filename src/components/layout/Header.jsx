@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { Suspense, lazy, useState } from "react";
-import { orange } from "../../constants/color";
+import { brandGradient } from "../../theme/tokens";
 import {
   Add as AddIcon,
   Menu as MenuIcon,
@@ -89,8 +89,9 @@ const Header = () => {
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>
         <AppBar
           position="static"
+          elevation={0}
           sx={{
-            bgcolor: orange,
+            backgroundImage: brandGradient,
           }}
         >
           <Toolbar>
@@ -98,9 +99,11 @@ const Header = () => {
               variant="h6"
               sx={{
                 display: { xs: "none", sm: "block" },
+                fontWeight: 800,
+                letterSpacing: "-0.01em",
               }}
             >
-              Chat Kro
+              ChatKroo
             </Typography>
 
             <Box

@@ -1,6 +1,16 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { createTheme, ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
+import {
+  brand,
+  accent,
+  neutral,
+  semantic,
+  radii,
+  brandGradient,
+  brandGradientHover,
+  fontStack,
+} from '../theme/tokens';
 
 const ThemeContext = createContext();
 
@@ -93,7 +103,6 @@ export const ThemeProvider = ({ children }) => {
   }, [mode]);
 
   useEffect(() => {
-    console.log('💾 Saving wallpaper to localStorage:', wallpaper);
     localStorage.setItem(WALLPAPER_STORAGE_KEY, JSON.stringify(wallpaper));
   }, [wallpaper]);
 
@@ -102,7 +111,6 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const changeWallpaper = (newWallpaper) => {
-    console.log('🖼️ ThemeContext: Changing wallpaper to:', newWallpaper);
     setWallpaper(newWallpaper);
   };
 
@@ -118,143 +126,92 @@ export const ThemeProvider = ({ children }) => {
     };
   };
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-          ...(mode === 'light'
-            ? {
-                // Light mode colors - Soft and Modern
-                primary: {
-                  main: '#667eea',
-                  light: '#8b9aee',
-                  dark: '#4d5fc7',
-                  contrastText: '#fff',
-                },
-                secondary: {
-                  main: '#764ba2',
-                  light: '#9568b8',
-                  dark: '#5a3a7d',
-                  contrastText: '#fff',
-                },
-                background: {
-                  default: '#f8f9fa',
-                  paper: '#ffffff',
-                },
-                text: {
-                  primary: '#1f2937',
-                  secondary: '#6b7280',
-                },
-                divider: 'rgba(0, 0, 0, 0.08)',
-                error: {
-                  main: '#ef4444',
-                },
-                success: {
-                  main: '#10b981',
-                },
-                warning: {
-                  main: '#f59e0b',
-                },
-                info: {
-                  main: '#3b82f6',
-                },
-              }
-            : {
-                // Dark mode colors - Soft and Easy on Eyes
-                primary: {
-                  main: '#8b9aee',
-                  light: '#a5b2f3',
-                  dark: '#667eea',
-                  contrastText: '#fff',
-                },
-                secondary: {
-                  main: '#9568b8',
-                  light: '#b088cf',
-                  dark: '#764ba2',
-                  contrastText: '#fff',
-                },
-                background: {
-                  default: '#0f1419',
-                  paper: '#1a1f2e',
-                },
-                text: {
-                  primary: '#e5e7eb',
-                  secondary: '#9ca3af',
-                },
-                divider: 'rgba(255, 255, 255, 0.08)',
-                error: {
-                  main: '#f87171',
-                },
-                success: {
-                  main: '#34d399',
-                },
-                warning: {
-                  main: '#fbbf24',
-                },
-                info: {
-                  main: '#60a5fa',
-                },
-              }),
+  const theme = useMemo(() => {
+    const isLight = mode === 'light';
+
+    return createTheme({
+      palette: {
+        mode,
+        primary: {
+          main: isLight ? brand[500] : brand[400],
+          light: isLight ? brand[400] : brand[300],
+          dark: isLight ? brand[600] : brand[500],
+          contrastText: '#fff',
         },
-        typography: {
-          fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-          h1: {
-            fontWeight: 700,
-          },
-          h2: {
-            fontWeight: 700,
-          },
-          h3: {
-            fontWeight: 600,
-          },
-          h4: {
-            fontWeight: 600,
-          },
-          h5: {
-            fontWeight: 600,
-          },
-          h6: {
-            fontWeight: 600,
-          },
-          button: {
-            textTransform: 'none',
-            fontWeight: 600,
-          },
+        secondary: {
+          main: isLight ? accent[500] : accent[400],
+          light: isLight ? accent[400] : accent[300],
+          dark: isLight ? accent[600] : accent[500],
+          contrastText: '#fff',
         },
-        components: {
-          MuiButton: {
-            styleOverrides: {
-              root: {
-                borderRadius: 8,
-                textTransform: 'none',
-                fontWeight: 600,
-                padding: '8px 16px',
-              },
+        background: {
+          default: isLight ? neutral[50] : neutral[950],
+          paper: isLight ? neutral[0] : neutral[850],
+        },
+        text: {
+          primary: isLight ? neutral[900] : neutral[100],
+          secondary: isLight ? neutral[500] : neutral[400],
+        },
+        divider: isLight ? 'rgba(17, 19, 29, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+        error: { main: isLight ? semantic.error.light : semantic.error.dark },
+        success: { main: isLight ? semantic.success.light : semantic.success.dark },
+        warning: { main: isLight ? semantic.warning.light : semantic.warning.dark },
+        info: { main: isLight ? semantic.info.light : semantic.info.dark },
+      },
+      shape: { borderRadius: radii.md },
+      typography: {
+        fontFamily: fontStack,
+        h1: { fontWeight: 800, letterSpacing: '-0.02em' },
+        h2: { fontWeight: 800, letterSpacing: '-0.02em' },
+        h3: { fontWeight: 700, letterSpacing: '-0.01em' },
+        h4: { fontWeight: 700, letterSpacing: '-0.01em' },
+        h5: { fontWeight: 700 },
+        h6: { fontWeight: 700 },
+        button: { textTransform: 'none', fontWeight: 600 },
+      },
+      components: {
+        MuiButton: {
+          defaultProps: { disableElevation: true },
+          styleOverrides: {
+            root: {
+              borderRadius: radii.pill,
+              textTransform: 'none',
+              fontWeight: 600,
+              padding: '8px 18px',
+            },
+            containedPrimary: {
+              backgroundImage: brandGradient,
+              '&:hover': { backgroundImage: brandGradientHover },
             },
           },
-          MuiPaper: {
-            styleOverrides: {
-              root: {
-                backgroundImage: 'none',
-              },
-            },
+        },
+        MuiPaper: {
+          styleOverrides: {
+            root: { backgroundImage: 'none', borderRadius: radii.lg },
           },
-          MuiIconButton: {
-            styleOverrides: {
-              root: {
-                '&:hover': {
-                  backgroundColor: mode === 'light' 
-                    ? 'rgba(102, 126, 234, 0.08)' 
-                    : 'rgba(139, 154, 238, 0.08)',
-                },
+        },
+        MuiOutlinedInput: {
+          styleOverrides: { root: { borderRadius: radii.md } },
+        },
+        MuiIconButton: {
+          styleOverrides: {
+            root: {
+              '&:hover': {
+                backgroundColor: isLight
+                  ? 'rgba(102, 126, 234, 0.08)'
+                  : 'rgba(127, 140, 246, 0.12)',
               },
             },
           },
         },
-      }),
-    [mode]
-  );
+        MuiTooltip: {
+          styleOverrides: {
+            tooltip: { borderRadius: radii.sm, fontSize: '0.75rem' },
+          },
+        },
+      },
+    });
+  }, [mode]);
 
   const value = {
     mode,
