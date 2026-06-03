@@ -14,11 +14,12 @@ const Profile = ({ user }) => {
       <Avatar
         src={transformImage(user?.avatar?.url)}
         sx={{
-          width: 200,
-          height: 200,
+          width: 180,
+          height: 180,
           objectFit: "contain",
           marginBottom: "1rem",
-          border: "5px solid white",
+          border: "4px solid",
+          borderColor: "divider",
         }}
       />
       <ProfileCard heading={"Bio"} text={user?.bio} />
@@ -42,14 +43,14 @@ const ProfileCard = ({ text, Icon, heading }) => (
     direction={"row"}
     alignItems={"center"}
     spacing={"1rem"}
-    color={"white"}
+    color={"text.primary"}
     textAlign={"center"}
   >
     {Icon && Icon}
 
     <Stack>
       <Typography variant="body1">{text}</Typography>
-      <Typography color={"gray"} variant="caption">
+      <Typography color={"text.secondary"} variant="caption">
         {heading}
       </Typography>
     </Stack>

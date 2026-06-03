@@ -145,7 +145,7 @@ export const ThemeProvider = ({ children }) => {
           contrastText: '#fff',
         },
         background: {
-          default: isLight ? neutral[50] : neutral[950],
+          default: isLight ? neutral[50] : neutral[900],
           paper: isLight ? neutral[0] : neutral[850],
         },
         text: {

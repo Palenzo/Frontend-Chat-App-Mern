@@ -1,6 +1,6 @@
 import { Skeleton, keyframes, styled } from "@mui/material";
 import { Link as LinkComponent } from "react-router-dom";
-import { grayColor, matBlack } from "../../constants/color";
+import { matBlack } from "../../constants/color";
 
 const VisuallyHiddenInput = styled("input")({
   border: 0,
@@ -16,10 +16,13 @@ const VisuallyHiddenInput = styled("input")({
 
 const Link = styled(LinkComponent)`
   text-decoration: none;
-  color: black;
+  color: inherit;
   padding: 1rem;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: ${({ theme }) =>
+      theme.palette.mode === "dark"
+        ? "rgba(255, 255, 255, 0.05)"
+        : "rgba(0, 0, 0, 0.05)"};
   }
 `;
 
@@ -30,7 +33,12 @@ const InputBox = styled("input")`
   outline: none;
   padding: 0 3rem;
   border-radius: 1.5rem;
-  background-color: ${grayColor};
+  font-size: 1rem;
+  background-color: ${({ theme }) => theme.palette.action.hover};
+  color: ${({ theme }) => theme.palette.text.primary};
+  &::placeholder {
+    color: ${({ theme }) => theme.palette.text.secondary};
+  }
 `;
 
 const SearchField = styled("input")`
@@ -39,8 +47,12 @@ const SearchField = styled("input")`
   border: none;
   outline: none;
   border-radius: 1.5rem;
-  background-color: ${grayColor};
   font-size: 1.1rem;
+  background-color: ${({ theme }) => theme.palette.action.hover};
+  color: ${({ theme }) => theme.palette.text.primary};
+  &::placeholder {
+    color: ${({ theme }) => theme.palette.text.secondary};
+  }
 `;
 
 const CurveButton = styled("button")`
