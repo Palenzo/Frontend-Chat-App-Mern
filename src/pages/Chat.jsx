@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import { IconButton, Skeleton, Stack, Box } from "@mui/material";
-import { grayColor, orange } from "../constants/color";
 import {
   AttachFile as AttachFileIcon,
   Send as SendIcon,
@@ -189,6 +188,15 @@ const Chat = ({ chatId, user }) => {
 
   const allMessages = [...oldMessages, ...messages];
 
+  // Group consecutive messages from the same sender within a 5-minute window.
+  const isGroupChat = chatDetails.data?.chat?.groupChat;
+  const senderId = (m) => (typeof m?.sender === "object" ? m?.sender?._id : m?.sender);
+  const sameGroup = (a, b) =>
+    a &&
+    b &&
+    senderId(a) === senderId(b) &&
+    Math.abs(new Date(a.createdAt) - new Date(b.createdAt)) < 5 * 60 * 1000;
+
   return chatDetails.isLoading ? (
     <Skeleton />
   ) : (
@@ -204,8 +212,8 @@ const Chat = ({ chatId, user }) => {
       <Stack
         ref={containerRef}
         boxSizing={"border-box"}
-        padding={"1rem"}
-        spacing={"1rem"}
+        padding={"1.25rem 1.5rem"}
+        spacing={0}
         height={"calc(90% - 60px)"}
         sx={{
           ...(wallpaper.type === 'gradient' 
@@ -241,8 +249,15 @@ const Chat = ({ chatId, user }) => {
           },
         }}
       >
-        {allMessages.map((i) => (
-          <MessageComponent key={i._id} message={i} user={user} />
+        {allMessages.map((msg, idx) => (
+          <MessageComponent
+            key={msg._id}
+            message={msg}
+            user={user}
+            isGroupChat={isGroupChat}
+            firstInGroup={!sameGroup(allMessages[idx - 1], msg)}
+            lastInGroup={!sameGroup(msg, allMessages[idx + 1])}
+          />
         ))}
 
         {userTyping && <TypingLoader />}
@@ -264,18 +279,14 @@ const Chat = ({ chatId, user }) => {
           position={"relative"}
         >
           <IconButton
-            sx={{
-              position: "absolute",
-              left: "1.5rem",
-              rotate: "30deg",
-            }}
+            sx={{ position: "absolute", left: "1.5rem", color: "text.secondary" }}
             onClick={handleFileOpen}
           >
             <AttachFileIcon />
           </IconButton>
 
           <InputBox
-            placeholder="Type Message Here..."
+            placeholder="Type a message…"
             value={message}
             onChange={messageOnChange}
           />
@@ -283,14 +294,13 @@ const Chat = ({ chatId, user }) => {
           <IconButton
             type="submit"
             sx={{
-              rotate: "-30deg",
-              bgcolor: orange,
+              bgcolor: "primary.main",
               color: "white",
               marginLeft: "1rem",
-              padding: "0.5rem",
-              "&:hover": {
-                bgcolor: "error.dark",
-              },
+              padding: "0.6rem",
+              transition: "transform 0.12s, filter 0.15s",
+              "&:hover": { bgcolor: "primary.main", filter: "brightness(1.08)" },
+              "&:active": { transform: "scale(0.92)" },
             }}
           >
             <SendIcon />

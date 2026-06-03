@@ -2,19 +2,20 @@
  * ChatKroo design tokens.
  *
  * Single source of truth for color, radius, elevation, and the brand gradient.
- * The MUI theme (see ThemeContext) is built from these so the violet brand stays
- * consistent and intentional across light and dark modes instead of being
- * re-declared as ad-hoc inline gradients all over the app.
+ * The MUI theme (see ThemeContext) is built from these. Dark-mode-first values
+ * follow modern chat-UI research: dark-grey (not pure-black) surfaces, off-white
+ * (not pure-white) text, a desaturated violet *action* color, and solid
+ * (not gradient) message bubbles.
  */
 
-// Brand — indigo/violet ramp (the established ChatKroo identity, harmonized).
+// Brand — indigo/violet ramp. 400 is the desaturated dark-mode action color.
 export const brand = {
   50: "#eef1ff",
   100: "#e0e5ff",
   200: "#c6ceff",
   300: "#a3b0fc",
-  400: "#7f8cf6",
-  500: "#667eea",
+  400: "#7c83ff", // dark-mode primary (approved accent)
+  500: "#667eea", // light-mode primary (established brand)
   600: "#5566d6",
   700: "#4650b8",
   800: "#3a4494",
@@ -30,21 +31,21 @@ export const accent = {
   700: "#502f6e",
 };
 
-// Neutrals — a single cool-gray (zinc) scale; no warm/cool mixing.
+// Neutrals — one cool-gray scale spanning light surfaces to dark canvas.
 export const neutral = {
   0: "#ffffff",
-  50: "#f7f8fa",
-  100: "#eef0f4",
+  50: "#f6f7f9",
+  100: "#eceef2", // dark-mode primary text
   200: "#e2e5eb",
   300: "#cbd0da",
-  400: "#9aa1b2",
+  400: "#9aa0ad", // dark-mode secondary text
   500: "#6b7280",
   600: "#4b5263",
   700: "#343a49",
-  800: "#1e2230",
-  850: "#171a26",
-  900: "#11131d",
-  950: "#0a0b12",
+  800: "#20222b", // dark elevated surface / received bubble
+  850: "#16171c", // dark paper
+  900: "#0e0f13", // dark canvas / light-mode primary text
+  950: "#0a0b0f",
 };
 
 // Semantic colors (presence/status). Green stays reserved for "online".
@@ -55,19 +56,28 @@ export const semantic = {
   info: { light: "#3b82f6", dark: "#60a5fa" },
 };
 
-// The signature ChatKroo gradient — defined once, referenced everywhere.
+// Message bubble fills — solid, mode-aware. Sent uses the action color.
+export const bubble = {
+  sent: { dark: "#4f54cf", light: "#667eea" }, // white text on both
+  received: { dark: "#20222b", light: "#f1f2f6" },
+};
+
+// The signature ChatKroo gradient — reserved for brand marks/logos only.
 export const brandGradient = `linear-gradient(135deg, ${brand[500]} 0%, ${accent[500]} 100%)`;
 export const brandGradientHover = `linear-gradient(135deg, ${brand[600]} 0%, ${accent[600]} 100%)`;
 
-export const radii = { sm: 8, md: 12, lg: 16, xl: 24, pill: 999 };
+export const radii = { sm: 8, md: 12, lg: 16, xl: 24, bubble: 18, pill: 999 };
 
 // Brand-tinted elevation — never pure black shadows.
 export const shadows = {
   brand: "0 8px 24px rgba(102, 126, 234, 0.28)",
   brandStrong: "0 12px 32px rgba(102, 126, 234, 0.40)",
-  soft: "0 2px 8px rgba(17, 19, 29, 0.08)",
-  card: "0 6px 24px rgba(17, 19, 29, 0.10)",
+  soft: "0 2px 8px rgba(10, 11, 15, 0.10)",
+  card: "0 6px 24px rgba(10, 11, 15, 0.14)",
+  popup: "0 18px 48px rgba(0, 0, 0, 0.45)",
 };
 
 export const fontStack =
-  'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  '-apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+export const easing = "cubic-bezier(0.16, 1, 0.3, 1)";

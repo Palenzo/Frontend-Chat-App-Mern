@@ -26,6 +26,7 @@ import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
+import AssistantWidget from "../specific/AssistantWidget";
 import Header from "./Header";
 
 const AppLayout = () => (WrappedComponent) => {
@@ -164,12 +165,16 @@ const AppLayout = () => (WrappedComponent) => {
             sx={{
               display: { xs: "none", md: "block" },
               padding: "2rem",
-              bgcolor: "rgba(0,0,0,0.85)",
+              bgcolor: "background.paper",
+              borderLeft: "1px solid",
+              borderColor: "divider",
             }}
           >
             <Profile user={user} />
           </Grid>
         </Grid>
+
+        <AssistantWidget />
       </>
     );
   };
