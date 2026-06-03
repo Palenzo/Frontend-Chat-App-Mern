@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Avatar, Typography, IconButton, Box, Chip } from '@mui/material';
+import { Stack, Avatar, Typography, IconButton, Box, useTheme } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import CallButtons from '../specific/CallButtons';
@@ -7,6 +7,9 @@ import { motion } from 'framer-motion';
 
 const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const onlineColor = theme.palette.success.main;
+  const brandColor = theme.palette.primary.main;
 
   const handleBack = () => {
     navigate('/');
@@ -74,7 +77,7 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
               sx={{
                 width: 45,
                 height: 45,
-                border: chat?.groupChat ? '2px solid #667eea' : isOnline ? '3px solid #10b981' : 'none',
+                border: chat?.groupChat ? `2px solid ${brandColor}` : isOnline ? `3px solid ${onlineColor}` : 'none',
                 boxShadow: chat?.groupChat || isOnline ? '0 0 10px rgba(102, 126, 234, 0.3)' : 'none',
               }}
             >
@@ -93,8 +96,8 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
                   width: 12,
                   height: 12,
                   borderRadius: '50%',
-                  backgroundColor: '#10b981',
-                  border: '2px solid white',
+                  backgroundColor: onlineColor,
+                  border: `2px solid ${theme.palette.background.paper}`,
                 }}
               />
             )}
@@ -121,7 +124,7 @@ const ChatHeader = ({ chat, members, user, onlineUsers = [] }) => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: isOnline ? '#10b981' : 'text.secondary',
+                  color: isOnline ? 'success.main' : 'text.secondary',
                   fontWeight: isOnline ? 'bold' : 'normal',
                 }}
               >
