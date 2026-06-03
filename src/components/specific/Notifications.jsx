@@ -63,7 +63,7 @@ const Notifications = () => {
   );
 };
 
-const NotificationItem = memo(({ sender, _id, handler }) => {
+const NotificationItem = memo(function NotificationItem({ sender, _id, handler }) {
   const { name, avatar } = sender;
   return (
     <ListItem>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
-import { getSocket } from '../socket';
+import { useSocket } from '../socket';
 import {
   CALL_INITIATED,
   CALL_ACCEPTED,
@@ -36,7 +36,7 @@ const ICE_SERVERS = {
 };
 
 export const WebRTCProvider = ({ children, user }) => {
-  const socket = getSocket();
+  const socket = useSocket();
 
   // Call state
   const [isCallActive, setIsCallActive] = useState(false);

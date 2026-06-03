@@ -15,7 +15,7 @@ import {
 import { InputBox } from "../components/styles/StyledComponents";
 import FileMenu from "../components/dialogs/FileMenu";
 import MessageComponent from "../components/shared/MessageComponent";
-import { getSocket } from "../socket";
+import { useSocket } from "../socket";
 import {
   ALERT,
   CHAT_JOINED,
@@ -37,7 +37,7 @@ import ChatHeader from "../components/layout/ChatHeader";
 import { useTheme } from "../context/ThemeContext";
 
 const Chat = ({ chatId, user }) => {
-  const socket = getSocket();
+  const socket = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { wallpaper } = useTheme();

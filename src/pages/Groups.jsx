@@ -412,7 +412,7 @@ const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
   );
 };
 
-const GroupListItem = memo(({ group, chatId }) => {
+const GroupListItem = memo(function GroupListItem({ group, chatId }) {
   const { name, avatar, _id } = group;
 
   return (
