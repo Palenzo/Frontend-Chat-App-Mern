@@ -289,11 +289,11 @@ const Login = () => {
             flexDirection: "column",
             alignItems: "center",
             backdropFilter: 'blur(20px)',
-            background: mode === 'dark' 
-              ? 'rgba(30, 30, 30, 0.85)'
-              : 'rgba(255, 255, 255, 0.85)',
+            background: mode === 'dark'
+              ? 'rgba(22, 23, 28, 0.9)'
+              : 'rgba(255, 255, 255, 0.88)',
             border: '1px solid',
-            borderColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+            borderColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
           }}
         >
           {/* Logo/Brand */}
@@ -305,18 +305,18 @@ const Login = () => {
           >
             <Box
               sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
+                width: 76,
+                height: 76,
+                borderRadius: '24px',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
+                boxShadow: '0 10px 28px rgba(102, 126, 234, 0.4)',
                 mb: 1,
               }}
             >
-              <Typography variant="h3" sx={{ color: 'white', fontWeight: 700 }}>
+              <Typography variant="h3" sx={{ color: 'white', fontWeight: 800, letterSpacing: '-0.02em' }}>
                 CK
               </Typography>
             </Box>
@@ -329,15 +329,13 @@ const Login = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
             sx={{
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'text.primary',
               mb: 1,
             }}
           >
-            ChatKroo!
+            ChatKroo
           </Typography>
 
           <Typography
