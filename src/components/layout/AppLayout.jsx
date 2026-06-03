@@ -1,4 +1,4 @@
-import { Drawer, Grid, Skeleton } from "@mui/material";
+import { Drawer, GridLegacy as Grid, Skeleton } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";

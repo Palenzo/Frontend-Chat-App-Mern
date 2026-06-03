@@ -7,7 +7,7 @@ import {
   Box,
   Typography,
   Switch,
-  Grid,
+  GridLegacy as Grid,
   Paper,
   Stack,
   Divider,

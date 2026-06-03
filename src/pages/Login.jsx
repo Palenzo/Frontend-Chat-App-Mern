@@ -23,7 +23,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Grid,
+  GridLegacy as Grid,
   Chip,
   Tooltip,
   Zoom,

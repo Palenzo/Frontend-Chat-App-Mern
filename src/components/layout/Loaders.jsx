@@ -1,4 +1,4 @@
-import { Grid, Skeleton, Stack } from "@mui/material";
+import { GridLegacy as Grid, Skeleton, Stack } from "@mui/material";
 import React from "react";
 import { BouncingSkeleton } from "../styles/StyledComponents";
 

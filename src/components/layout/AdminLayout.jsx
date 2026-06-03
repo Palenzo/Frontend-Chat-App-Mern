@@ -10,7 +10,7 @@ import {
 import {
   Box,
   Drawer,
-  Grid,
+  GridLegacy as Grid,
   IconButton,
   Stack,
   Typography,
@@ -65,8 +65,8 @@ const Sidebar = ({ w = "100%" }) => {
 
   return (
     <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"}>
-      <Typography variant="h5" textTransform={"uppercase"}>
-        Chattu
+      <Typography variant="h5" textTransform={"uppercase"} fontWeight={800}>
+        ChatKroo
       </Typography>
 
       <Stack spacing={"1rem"}>
