@@ -1,16 +1,17 @@
 import { useInputValidation } from "6pp";
 import {
+  Box,
   Button,
   Container,
   Paper,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { bgGradient } from "../../constants/color";
 import { adminLogin, getAdmin } from "../../redux/thunks/admin";
+import { brandGradient } from "../../theme/tokens";
 
 const AdminLogin = () => {
   const { isAdmin } = useSelector((state) => state.auth);
@@ -31,38 +32,53 @@ const AdminLogin = () => {
   if (isAdmin) return <Navigate to="/admin/dashboard" />;
 
   return (
-    <div
-      style={{
-        backgroundImage: bgGradient,
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
+        p: 3,
       }}
     >
-      <Container
-        component={"main"}
-        maxWidth="xs"
-        sx={{
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Container component="main" maxWidth="xs">
         <Paper
-          elevation={3}
+          elevation={0}
           sx={{
             padding: 4,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 4,
           }}
         >
-          <Typography variant="h5">Admin Login</Typography>
-          <form
-            style={{
-              width: "100%",
-              marginTop: "1rem",
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: "18px",
+              backgroundImage: brandGradient,
+              display: "grid",
+              placeItems: "center",
+              color: "#fff",
+              fontWeight: 800,
+              mb: 2,
             }}
-            onSubmit={submitHandler}
           >
+            CK
+          </Box>
+
+          <Typography variant="h5" fontWeight={800} letterSpacing="-0.01em">
+            Admin access
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
+            Enter the admin secret key to continue
+          </Typography>
+
+          <Box component="form" onSubmit={submitHandler} sx={{ width: "100%" }}>
             <TextField
               required
               fullWidth
@@ -75,9 +91,7 @@ const AdminLogin = () => {
             />
 
             <Button
-              sx={{
-                marginTop: "1rem",
-              }}
+              sx={{ mt: 2, py: 1.3 }}
               variant="contained"
               color="primary"
               type="submit"
@@ -85,10 +99,10 @@ const AdminLogin = () => {
             >
               Login
             </Button>
-          </form>
+          </Box>
         </Paper>
       </Container>
-    </div>
+    </Box>
   );
 };
 

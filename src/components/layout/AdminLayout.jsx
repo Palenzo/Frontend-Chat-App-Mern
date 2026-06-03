@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { Link as LinkComponent, Navigate, useLocation } from "react-router-dom";
-import { grayColor, matBlack } from "../../constants/color";
+import { matBlack } from "../../constants/color";
 import { useDispatch, useSelector } from "react-redux";
 import { adminLogout } from "../../redux/thunks/admin";
 
@@ -138,7 +138,7 @@ const AdminLayout = ({ children }) => {
         md={8}
         lg={9}
         sx={{
-          bgcolor: grayColor,
+          bgcolor: "background.default",
         }}
       >
         {children}

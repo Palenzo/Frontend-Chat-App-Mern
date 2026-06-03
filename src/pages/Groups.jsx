@@ -28,7 +28,6 @@ import { matBlack } from "../constants/color";
 import { useDispatch, useSelector } from "react-redux";
 import UserItem from "../components/shared/UserItem";
 import { useAsyncMutation, useErrors } from "../hooks/hook";
-import { useTheme } from "../context/ThemeContext";
 import {
   useChatDetailsQuery,
   useDeleteChatMutation,
@@ -49,7 +48,6 @@ const Groups = () => {
   const chatId = useSearchParams()[0].get("group");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { wallpaper } = useTheme();
 
   const { isAddMember } = useSelector((state) => state.misc);
 
@@ -279,15 +277,7 @@ const Groups = () => {
           alignItems: "center",
           position: "relative",
           padding: "1rem 3rem",
-          ...(wallpaper?.type === 'gradient' 
-            ? { background: wallpaper.value }
-            : {
-                backgroundColor: wallpaper?.backgroundColor || '#fff',
-                backgroundImage: wallpaper?.value ? `url(${wallpaper.value})` : 'none',
-                backgroundRepeat: 'repeat',
-                backgroundSize: 'auto'
-              }
-          )
+          bgcolor: "background.default",
         }}
       >
         {IconBtns}
@@ -380,23 +370,16 @@ const Groups = () => {
 };
 
 const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
-  const { wallpaper } = useTheme();
-  
   return (
     <Stack
       width={w}
       sx={{
         height: "100vh",
         overflow: "auto",
-        ...(wallpaper?.type === 'gradient' 
-          ? { background: wallpaper.value }
-          : {
-              backgroundColor: wallpaper?.backgroundColor || '#fff',
-              backgroundImage: wallpaper?.value ? `url(${wallpaper.value})` : 'none',
-              backgroundRepeat: 'repeat',
-              backgroundSize: 'auto'
-            }
-        )
+        bgcolor: "background.paper",
+        borderRight: "1px solid",
+        borderColor: "divider",
+        py: 1,
       }}
     >
       {myGroups.length > 0 ? (

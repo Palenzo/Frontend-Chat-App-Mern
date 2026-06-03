@@ -7,8 +7,6 @@ import {
   neutral,
   semantic,
   radii,
-  brandGradient,
-  brandGradientHover,
   fontStack,
 } from '../theme/tokens';
 
@@ -184,11 +182,11 @@ export const ThemeProvider = ({ children }) => {
               borderRadius: radii.pill,
               textTransform: 'none',
               fontWeight: 600,
-              padding: '8px 18px',
+              padding: '9px 20px',
             },
+            // Solid accent buttons (no gradient) per the redesign.
             containedPrimary: {
-              backgroundImage: brandGradient,
-              '&:hover': { backgroundImage: brandGradientHover },
+              '&:hover': { filter: 'brightness(1.08)' },
             },
           },
         },
