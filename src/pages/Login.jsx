@@ -23,12 +23,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  GridLegacy as Grid,
   Chip,
   Tooltip,
   Zoom,
   Fade,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useState } from "react";

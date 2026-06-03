@@ -7,10 +7,10 @@ import {
   Menu as MenuIcon,
   Message as MessageIcon,
 } from "@mui/icons-material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Box,
   Drawer,
-  GridLegacy as Grid,
   IconButton,
   Stack,
   Typography,
