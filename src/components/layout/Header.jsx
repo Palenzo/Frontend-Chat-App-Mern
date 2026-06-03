@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   IconButton,
+  Stack,
   Toolbar,
   Tooltip,
   Typography,
@@ -91,20 +92,45 @@ const Header = () => {
           position="static"
           elevation={0}
           sx={{
-            backgroundImage: brandGradient,
+            bgcolor: "background.paper",
+            color: "text.primary",
+            borderBottom: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Toolbar>
-            <Typography
-              variant="h6"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                fontWeight: 800,
-                letterSpacing: "-0.01em",
-              }}
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1.25}
+              sx={{ display: { xs: "none", sm: "flex" } }}
             >
-              ChatKroo
-            </Typography>
+              <Box
+                sx={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "9px",
+                  backgroundImage: brandGradient,
+                  display: "grid",
+                  placeItems: "center",
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: 15,
+                }}
+              >
+                C
+              </Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 800,
+                  letterSpacing: "-0.01em",
+                  color: "primary.main",
+                }}
+              >
+                ChatKroo
+              </Typography>
+            </Stack>
 
             <Box
               sx={{

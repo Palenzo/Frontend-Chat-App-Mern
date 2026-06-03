@@ -28,6 +28,13 @@ const WALLPAPER_STORAGE_KEY = 'chatkroo-wallpaper';
 // Preset wallpapers
 export const presetWallpapers = [
   {
+    id: 'midnight',
+    name: 'Midnight',
+    type: 'gradient',
+    value: 'linear-gradient(160deg, #0e0f13 0%, #14161f 100%)',
+    thumbnail: 'linear-gradient(160deg, #0e0f13 0%, #14161f 100%)',
+  },
+  {
     id: 'gradient-1',
     name: 'Purple Dream',
     type: 'gradient',
